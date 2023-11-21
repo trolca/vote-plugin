@@ -1,7 +1,9 @@
 package me.tololo11.voteplugin;
 
 import me.tololo11.voteplugin.commands.TestCommand;
+import me.tololo11.voteplugin.commands.VoteCommand;
 import me.tololo11.voteplugin.managers.DatabaseManager;
+import me.tololo11.voteplugin.managers.PollsManager;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -15,6 +17,7 @@ public final class VotePlugin extends JavaPlugin {
     public Logger logger;
 
     private DatabaseManager databaseManager;
+    private PollsManager pollsManager;
 
     public VotePlugin(){
         super();
@@ -30,15 +33,19 @@ public final class VotePlugin extends JavaPlugin {
         getConfig().options().copyDefaults(true);
         saveDefaultConfig();
 
+
+
         try {
             databaseManager = new DatabaseManager();
+            pollsManager = new PollsManager(databaseManager);
         } catch (SQLException e) {
             logger.severe("Error while connecting to the database");
             logger.severe("Make sure the info in config is accurate!");
             throw new RuntimeException(e);
         }
 
-        getCommand("testcommand").setExecutor(new TestCommand(databaseManager));
+        getCommand("testcommand").setExecutor(new TestCommand());
+        getCommand("vote").setExecutor(new VoteCommand(pollsManager));
 
     }
 
