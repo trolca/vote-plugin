@@ -1,9 +1,10 @@
-package me.tololo11.voteplugin;
+package me.trololo11.voteplugin;
 
-import me.tololo11.voteplugin.commands.TestCommand;
-import me.tololo11.voteplugin.commands.VoteCommand;
-import me.tololo11.voteplugin.managers.DatabaseManager;
-import me.tololo11.voteplugin.managers.PollsManager;
+import me.trololo11.voteplugin.commands.TestCommand;
+import me.trololo11.voteplugin.commands.VoteCommand;
+import me.trololo11.voteplugin.commands.tabcompleters.VoteTabCompleter;
+import me.trololo11.voteplugin.managers.DatabaseManager;
+import me.trololo11.voteplugin.managers.PollsManager;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -44,8 +45,10 @@ public final class VotePlugin extends JavaPlugin {
             throw new RuntimeException(e);
         }
 
-        getCommand("testcommand").setExecutor(new TestCommand());
+        getCommand("testcommand").setExecutor(new TestCommand(pollsManager));
         getCommand("vote").setExecutor(new VoteCommand(pollsManager));
+
+        getCommand("vote").setTabCompleter(new VoteTabCompleter());
 
     }
 

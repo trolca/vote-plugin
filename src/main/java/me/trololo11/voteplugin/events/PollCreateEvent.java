@@ -1,7 +1,7 @@
-package me.tololo11.voteplugin.events;
+package me.trololo11.voteplugin.events;
 
-import me.tololo11.voteplugin.utils.Poll;
-import me.tololo11.voteplugin.managers.PollsManager;
+import me.trololo11.voteplugin.utils.Poll;
+import me.trololo11.voteplugin.managers.PollsManager;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;

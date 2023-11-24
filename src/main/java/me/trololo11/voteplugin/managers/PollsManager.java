@@ -1,6 +1,6 @@
-package me.tololo11.voteplugin.managers;
+package me.trololo11.voteplugin.managers;
 
-import me.tololo11.voteplugin.utils.Poll;
+import me.trololo11.voteplugin.utils.Poll;
 
 import java.sql.SQLException;
 import java.util.*;
@@ -45,6 +45,10 @@ public class PollsManager {
     public void addPoll(Poll poll) throws SQLException {
         databaseManager.addPoll(poll);
         activePolls.put(poll.code,poll);
+    }
+
+    private void checkDate(Poll poll, Date date){
+
     }
 
     /**

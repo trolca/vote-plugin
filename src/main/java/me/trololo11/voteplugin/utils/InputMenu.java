@@ -1,7 +1,7 @@
-package me.tololo11.voteplugin.utils;
+package me.trololo11.voteplugin.utils;
 
 
-import me.tololo11.voteplugin.VotePlugin;
+import me.trololo11.voteplugin.VotePlugin;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;

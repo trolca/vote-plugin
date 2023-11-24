@@ -1,6 +1,6 @@
-package me.tololo11.voteplugin.utils;
+package me.trololo11.voteplugin.utils;
 
-import me.tololo11.voteplugin.managers.DatabaseManager;
+import me.trololo11.voteplugin.managers.DatabaseManager;
 
 import java.sql.SQLException;
 import java.util.*;

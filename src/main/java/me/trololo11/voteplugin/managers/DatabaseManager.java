@@ -1,10 +1,10 @@
-package me.tololo11.voteplugin.managers;
+package me.trololo11.voteplugin.managers;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import me.tololo11.voteplugin.VotePlugin;
-import me.tololo11.voteplugin.utils.Option;
-import me.tololo11.voteplugin.utils.Poll;
+import me.trololo11.voteplugin.VotePlugin;
+import me.trololo11.voteplugin.utils.Option;
+import me.trololo11.voteplugin.utils.Poll;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 

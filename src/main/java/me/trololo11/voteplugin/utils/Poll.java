@@ -1,4 +1,4 @@
-package me.tololo11.voteplugin.utils;
+package me.trololo11.voteplugin.utils;
 
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;

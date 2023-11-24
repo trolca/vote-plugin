@@ -1,4 +1,4 @@
-package me.tololo11.voteplugin.utils;
+package me.trololo11.voteplugin.utils;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;

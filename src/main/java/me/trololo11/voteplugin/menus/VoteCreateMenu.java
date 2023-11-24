@@ -1,6 +1,6 @@
-package me.tololo11.voteplugin.menus;
+package me.trololo11.voteplugin.menus;
 
-import me.tololo11.voteplugin.utils.Menu;
+import me.trololo11.voteplugin.utils.Menu;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;

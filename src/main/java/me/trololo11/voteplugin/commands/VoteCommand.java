@@ -1,8 +1,8 @@
-package me.tololo11.voteplugin.commands;
+package me.trololo11.voteplugin.commands;
 
-import me.tololo11.voteplugin.VotePlugin;
-import me.tololo11.voteplugin.managers.PollsManager;
-import me.tololo11.voteplugin.utils.Poll;
+import me.trololo11.voteplugin.VotePlugin;
+import me.trololo11.voteplugin.managers.PollsManager;
+import me.trololo11.voteplugin.utils.Poll;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -13,7 +13,7 @@ import java.sql.SQLException;
 
 public class VoteCommand implements CommandExecutor {
 
-    private PollsManager  pollsManager;
+    private PollsManager pollsManager;
     private VotePlugin plugin = VotePlugin.getPlugin();
 
     public VoteCommand(PollsManager pollsManager){
