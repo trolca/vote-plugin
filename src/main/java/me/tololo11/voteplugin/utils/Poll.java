@@ -1,5 +1,6 @@
 package me.tololo11.voteplugin.utils;
 
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
@@ -29,9 +30,10 @@ public class Poll {
     public boolean showVotes;
     private String title;
     private Date endDate;
+    private Material icon;
     private boolean isActive;
 
-    public Poll(String code, OfflinePlayer creator, LinkedList<Option> options, String title, Date endDate,boolean showVotes, boolean isActive) {
+    public Poll(String code, OfflinePlayer creator, LinkedList<Option> options, String title,Material icon, Date endDate,boolean showVotes, boolean isActive) {
 
         if(code.length() != 6){
             throw new IllegalArgumentException("The code of every vote should be 6 characters long!");
@@ -41,6 +43,7 @@ public class Poll {
         this.creator = creator;
         this.options = options;
         this.title = title;
+        this.icon = icon;
         this.endDate = endDate;
         this.showVotes = showVotes;
         this.isActive = isActive;
@@ -69,6 +72,10 @@ public class Poll {
 
     public void setActive(boolean active) {
         isActive = active;
+    }
+
+    public Material getIcon() {
+        return icon;
     }
 
     public boolean hasVoted(Player player){

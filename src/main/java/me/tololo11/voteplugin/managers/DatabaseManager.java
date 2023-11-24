@@ -6,6 +6,7 @@ import me.tololo11.voteplugin.VotePlugin;
 import me.tololo11.voteplugin.utils.Option;
 import me.tololo11.voteplugin.utils.Poll;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 
 import java.sql.*;
 import java.util.*;
@@ -69,7 +70,7 @@ public class DatabaseManager {
         Statement statement = connection.createStatement();
 
         statement.execute("CREATE TABLE IF NOT EXISTS polls(code char(6) primary key unique not null, " +
-                "creator char(36) not null, title text, end_date bigint not null, show_votes bool not null);");
+                "creator char(36) not null, title text,icon varchar(50) not null, end_date bigint not null, show_votes bool not null);");
         statement.executeUpdate("CREATE TABLE IF NOT EXISTS polls_options(code char(6) not null, option_num tinyint not null, name varchar(50), primary key(code, option_num) );");
         statement.execute("CREATE TABLE IF NOT EXISTS players_voted(uuid char(36) not null, poll_code char(6) not null, vote_option tinyint not null, primary key(uuid, poll_code, vote_option))");
 
@@ -106,15 +107,16 @@ public class DatabaseManager {
     public void addPoll(Poll poll) throws SQLException {
         Connection connection = getConnection();
 
-        String sql = "INSERT INTO polls VALUES (?,?,?,?,?)";
+        String sql = "INSERT INTO polls VALUES (?,?,?,?,?,?)";
 
         PreparedStatement voteDataStatement = connection.prepareStatement(sql);
 
         voteDataStatement.setString(1, poll.code);
         voteDataStatement.setString(2, poll.creator.getUniqueId().toString());
         voteDataStatement.setString(3, poll.getTitle());
-        voteDataStatement.setLong(4, poll.getEndDate().getTime());
-        voteDataStatement.setBoolean(5, poll.showVotes);
+        voteDataStatement.setString(4, poll.getIcon().toString());
+        voteDataStatement.setLong(5, poll.getEndDate().getTime());
+        voteDataStatement.setBoolean(6, poll.showVotes);
 
         voteDataStatement.executeUpdate();
 
@@ -157,6 +159,7 @@ public class DatabaseManager {
             Date endDate = new Date(allPollsResult.getLong("end_date"));
             String title = allPollsResult.getString("title");
             UUID creator = UUID.fromString(allPollsResult.getString("creator"));
+            Material icon = Material.valueOf(allPollsResult.getString("icon"));
             boolean showVotes = allPollsResult.getBoolean("show_votes");
             LinkedList<Option> options = new LinkedList<>();
 
@@ -204,6 +207,7 @@ public class DatabaseManager {
                     Bukkit.getOfflinePlayer(creator),
                     options,
                     title,
+                    icon,
                     endDate,
                     endDate.before(new Date()),
                     showVotes);
