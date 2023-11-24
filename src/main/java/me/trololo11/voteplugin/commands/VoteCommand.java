@@ -1,6 +1,7 @@
 package me.trololo11.voteplugin.commands;
 
 import me.trololo11.voteplugin.VotePlugin;
+import me.trololo11.voteplugin.managers.DatabaseManager;
 import me.trololo11.voteplugin.managers.PollsManager;
 import me.trololo11.voteplugin.utils.Poll;
 import org.bukkit.ChatColor;
@@ -14,10 +15,12 @@ import java.sql.SQLException;
 public class VoteCommand implements CommandExecutor {
 
     private PollsManager pollsManager;
+    private DatabaseManager databaseManager;
     private VotePlugin plugin = VotePlugin.getPlugin();
 
-    public VoteCommand(PollsManager pollsManager){
+    public VoteCommand(PollsManager pollsManager, DatabaseManager databaseManager){
         this.pollsManager = pollsManager;
+        this.databaseManager = databaseManager;
     }
 
     @Override
@@ -70,7 +73,7 @@ public class VoteCommand implements CommandExecutor {
 
         //Adds the vote
         try {
-            poll.getAllOptions().get(optionNum-1).addVote(player.getUniqueId(), poll);
+            poll.getAllOptions().get(optionNum-1).addVote(player.getUniqueId(), poll, databaseManager   );
         } catch (SQLException e) {
             plugin.logger.severe("Error while voting for the poll "+ code);
             e.printStackTrace(System.out);

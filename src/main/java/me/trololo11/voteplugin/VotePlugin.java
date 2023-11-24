@@ -17,6 +17,7 @@ public final class VotePlugin extends JavaPlugin {
     public final Properties dbProperties;
     public Logger logger;
 
+    private int timeKeepPollsLogs;
     private DatabaseManager databaseManager;
     private PollsManager pollsManager;
 
@@ -34,7 +35,7 @@ public final class VotePlugin extends JavaPlugin {
         getConfig().options().copyDefaults(true);
         saveDefaultConfig();
 
-
+        timeKeepPollsLogs = getConfig().getInt("time-keep-polls-log");
 
         try {
             databaseManager = new DatabaseManager();
@@ -46,7 +47,7 @@ public final class VotePlugin extends JavaPlugin {
         }
 
         getCommand("testcommand").setExecutor(new TestCommand(pollsManager));
-        getCommand("vote").setExecutor(new VoteCommand(pollsManager));
+        getCommand("vote").setExecutor(new VoteCommand(pollsManager, databaseManager));
 
         getCommand("vote").setTabCompleter(new VoteTabCompleter());
 
@@ -60,6 +61,10 @@ public final class VotePlugin extends JavaPlugin {
 
     public static VotePlugin getPlugin(){
         return VotePlugin.getPlugin(VotePlugin.class);
+    }
+
+    public int getTimeKeepPollsLogs() {
+        return timeKeepPollsLogs;
     }
 
 }

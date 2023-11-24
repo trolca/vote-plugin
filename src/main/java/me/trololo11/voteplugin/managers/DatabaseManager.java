@@ -71,8 +71,11 @@ public class DatabaseManager {
 
         statement.execute("CREATE TABLE IF NOT EXISTS polls(code char(6) primary key unique not null, " +
                 "creator char(36) not null, title text,icon varchar(50) not null, end_date bigint not null, show_votes bool not null);");
+
         statement.executeUpdate("CREATE TABLE IF NOT EXISTS polls_options(code char(6) not null, option_num tinyint not null, name varchar(50), primary key(code, option_num) );");
-        statement.execute("CREATE TABLE IF NOT EXISTS players_voted(uuid char(36) not null, poll_code char(6) not null, vote_option tinyint not null, primary key(uuid, poll_code, vote_option))");
+        statement.execute("CREATE TABLE IF NOT EXISTS players_voted(uuid char(36) not null, poll_code char(6) not null, vote_option tinyint not null, primary key(uuid, poll_code))");
+        statement.execute("CREATE TABLE IF NOT EXISTS players_seen_poll(uuid char(36) not null, poll_code char(6) not null," +
+                "PRIMARY KEY(uuid, poll_code), FOREIGN KEY (poll_code) REFERENCES polls(code))");
 
         statement.execute("CREATE TABLE IF NOT EXISTS has_created_keys(has bool)");
 
@@ -195,7 +198,7 @@ public class DatabaseManager {
                     playersVoted.add(UUID.fromString(playerVotedResults.getString("uuid")));
                 }
 
-                options.add(new Option(playersVoted, optionsResults.getString("name"), optionNum,this));
+                options.add(new Option(playersVoted, optionsResults.getString("name"), optionNum));
 
                 playerVotedResults.close();
                 playersVotesStatement.close();

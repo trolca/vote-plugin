@@ -1,11 +1,19 @@
 package me.trololo11.voteplugin.utils;
 
-import net.md_5.bungee.api.ChatColor;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.hover.content.Text;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemFlag;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class Utils {
@@ -14,6 +22,11 @@ public class Utils {
         return ChatColor.translateAlternateColorCodes('&', s);
     }
 
+    /**
+     * Prints the info about the poll to the player and makes the options clickable for the player to vote
+     * @param player The player to print the poll to
+     * @param poll The poll to print
+     */
     public static void printPollToPlayer(Player player, Poll poll){
 
         player.sendMessage(ChatColor.GREEN + poll.creator.getName() + " has just created a new poll!");
@@ -33,35 +46,120 @@ public class Utils {
         }
 
         player.sendMessage(" ");
-        player.sendMessage(ChatColor.GRAY + "Ends in: "+ getStringTime(poll.getEndDate().getTime()/1000));
+        player.sendMessage(ChatColor.GRAY + "Ends in: "+ getStringTime(poll.getEndDate().getTime()/1000, new char[]{'d', 'h'} ));
         player.sendMessage(ChatColor.GRAY + "--------------------------------------");
         player.sendMessage(ChatColor.GRAY + ChatColor.ITALIC.toString() + "(Click the option or do /vote "+poll.code+" <option> to vote)");
 
-
     }
+
+    /**
+     * Prints the results of a poll for the specified players. <b>Should be used when the poll has ended</b>
+     * @param player The player to print to
+     * @param poll The poll to print about
+     */
+    public static void printPollResultsToPlayer(Player player, Poll poll){
+        long allVotes = poll.getTotalVotes();
+        Option wonOption = poll.getWinningOption();
+
+        player.sendMessage(ChatColor.GREEN + "Poll "+ poll.getTitle() + " has finished!");
+        player.sendMessage("");
+        player.sendMessage(ChatColor.GRAY + ChatColor.BOLD.toString() + "Results:");
+        for(Option option : poll.getAllOptions()){
+            int amountOfVotes = option.getAmountOfVotes();
+            int percentageVotes = (int) ( (double) amountOfVotes/allVotes )*100;
+
+            if(amountOfVotes == wonOption.getAmountOfVotes()){
+                player.sendMessage(ChatColor.GRAY.toString() + option.getOptionNumber() + " - "
+                        + ChatColor.GOLD + ChatColor.BOLD + option.getName() + Utils.chat("&7&o("+percentageVotes+"%)"));
+            }else{
+                player.sendMessage(Utils.chat("&7"+option.getOptionNumber()+" - &f"+ option.getName() + "&7&o("+percentageVotes+"%)"));
+            }
+        }
+        player.sendMessage("");
+        player.sendMessage(ChatColor.GRAY.toString() + poll.getTotalVotes() + " total votes");
+    }
+
+    /**
+     * Creates a new {@link ItemStack} from the specified parameters
+     * @param material The material of this item
+     * @param name The display name of this item
+     * @param localizedName The localized name of this item
+     * @param lore The LOREEE of this item
+     * @return The created {@link ItemStack}
+     */
+    public static ItemStack createItem(Material material, String name, String localizedName, String... lore){
+        ItemStack item = new ItemStack(material);
+
+        ArrayList<String> loreArray = new ArrayList<>();
+
+        for(String string : lore){
+            loreArray.add(Utils.chat(string));
+        }
+
+        item.setItemMeta(getItemMeta(item.getItemMeta(), name, localizedName, loreArray));
+
+        return item;
+    }
+
+    private static ItemMeta getItemMeta(ItemMeta itemMeta, String displayName, String localizedName, List<String> lore){
+
+        itemMeta.setDisplayName(Utils.chat(displayName));
+        itemMeta.setLocalizedName(localizedName);
+        itemMeta.setLore(lore);
+        itemMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_UNBREAKABLE);
+
+        return itemMeta;
+    }
+
 
 
     /**
      * Returns a time in string based type. <br>
      * For ex. "1h3m3s"
      * @param time The time to format to string. <b>The time must be provided in seconds</b>
-     * @return A formated string based from the time param. <br>
+     * @return A formatted string based from the time param. <br>
      * For a param 63 it would return "1m3s"
      */
     public static String getStringTime(long time){
+        return getStringTime(time, new char[0]);
+    }
+
+    /**
+     * Returns a time in string based type. <br>
+     * For ex. "1h3m3s"
+     * @param time The time to format to string. <b>The time must be provided in seconds</b>
+     * @param timeRange An array to specify which time frames to return.<br>
+     *                  ex. For an array {'d', 'h'} it would only return 1d2h not 1d2h34m43s.
+     * @return A formatted string based from the time param. <br>
+     * For a param 63 it would return "1m3s"
+     */
+    public static String getStringTime(long time, char[] timeRange){
         long days = time/85400;
-        long hours = (time/3600)-(days*24);
-        long minutes = (time/60)-(hours*60);
-        long seconds = time-(minutes*60);
+        time -= days * 85400;
+        long hours = (time/3600);
+        time -= hours * 3600;
+        long minutes = (time/60);
+        time -= minutes * 60;
+        long seconds = time;
         StringBuilder stringBuilder = new StringBuilder();
 
-        if(days != 0) stringBuilder.append(days+"d");
-        if(hours != 0) stringBuilder.append(hours+"h");
-        if(minutes != 0) stringBuilder.append(minutes+"m");
-        if(seconds != 0) stringBuilder.append(seconds+"s");
+        if(days > 0 && charInArray(timeRange, 'd')) stringBuilder.append(days+"d");
+        if(hours > 0 && charInArray(timeRange, 'h')) stringBuilder.append(hours+"h");
+        if(minutes > 0 && charInArray(timeRange, 'm')) stringBuilder.append(minutes+"m");
+        if(seconds > 0 && charInArray(timeRange, 's')) stringBuilder.append(seconds+"s");
 
         return stringBuilder.toString();
 
+    }
+
+    public static boolean charInArray(char[] array, char charToCheck){
+
+        for(char character : array){
+
+            if(character == charToCheck) return true;
+        }
+
+        return false;
     }
 
 }

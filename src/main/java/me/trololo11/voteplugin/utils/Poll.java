@@ -39,6 +39,10 @@ public class Poll {
             throw new IllegalArgumentException("The code of every vote should be 6 characters long!");
         }
 
+        if(options.size() <= 1){
+            throw new IllegalArgumentException("There have to be at least 2 options to create a poll!");
+        }
+
         this.code = code;
         this.creator = creator;
         this.options = options;
@@ -86,6 +90,33 @@ public class Poll {
 
         return false;
 
+    }
+
+    public Option getWinningOption(){
+
+        int largestVotes = 0;
+        Option winningOption = getAllOptions().get(0);
+
+        for(Option option : getAllOptions()){
+            if(largestVotes < option.getAmountOfVotes()){
+                largestVotes = option.getAmountOfVotes();
+                winningOption = option;
+            }
+
+        }
+
+        return winningOption;
+
+    }
+
+    public long getTotalVotes(){
+        long allVotes = 0;
+
+        for(Option option : getAllOptions()){
+            allVotes += option.getAmountOfVotes();
+        }
+
+        return allVotes;
     }
 
     public List<Option> getAllOptions(){

@@ -4,3 +4,5 @@ user: 'root'
 password: ''
 
 database-name: 'vote_plugin_database'
+
+time-keep-polls-log: 0 #for how much time (in hours) will the plugin keep the logs of already finished pools (type 0 to keep the logs for forever)

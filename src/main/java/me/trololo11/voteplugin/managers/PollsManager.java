@@ -1,6 +1,13 @@
 package me.trololo11.voteplugin.managers;
 
+import me.trololo11.voteplugin.VotePlugin;
+import me.trololo11.voteplugin.tasks.PollCountDownTask;
+import me.trololo11.voteplugin.utils.Option;
 import me.trololo11.voteplugin.utils.Poll;
+import me.trololo11.voteplugin.utils.Utils;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 
 import java.sql.SQLException;
 import java.util.*;
@@ -15,17 +22,22 @@ public class PollsManager {
     private DatabaseManager databaseManager;
     private ArrayList<Poll> historicPolls = new ArrayList<>();
 
+    private VotePlugin plugin = VotePlugin.getPlugin();
+
 
     public PollsManager(DatabaseManager databaseManager) throws SQLException {
         this.databaseManager = databaseManager;
         ArrayList<Poll> allPolls = databaseManager.getAllPolls();
+        Date todayDate = new Date();
 
         allPolls.forEach(poll -> {
-            if(poll.getEndDate().after(new Date())){
-                historicPolls.add(poll);
-            }else{
+            if(!poll.getEndDate().before(todayDate)){
                 activePolls.put(poll.code, poll);
+                createStopTask(poll);
+            }else if(todayDate.getTime() - poll.getEndDate().getTime() < 604800000L){
+                historicPolls.add(poll);
             }
+
         });
     }
 
@@ -47,8 +59,25 @@ public class PollsManager {
         activePolls.put(poll.code,poll);
     }
 
-    private void checkDate(Poll poll, Date date){
+    private void createStopTask(Poll poll){
 
+        Date endDate = poll.getEndDate();
+        long timeBetween = endDate.getTime() - new Date().getTime();
+        int hoursLeft = (int) Math.floor(timeBetween / 3600000.0);
+        long startDelay = ((timeBetween - (hoursLeft * 3600000L)) / 1000) * 20;
+
+        PollCountDownTask pollCountDownTask = new PollCountDownTask(this, poll, hoursLeft+1);
+        pollCountDownTask.runTaskTimer(plugin, startDelay, 72000L);
+
+    }
+
+    public void stopPoll(Poll poll){
+        historicPolls.add(poll);
+        activePolls.remove(poll.code);
+
+        for(Player player : Bukkit.getOnlinePlayers()){
+            Utils.printPollResultsToPlayer(player, poll);
+        }
     }
 
     /**

@@ -10,13 +10,11 @@ public class Option {
     private String name;
     private ArrayList<UUID> playersVoted;
     private byte optionNumber;
-    private DatabaseManager databaseManager;
 
 
-    public Option(ArrayList<UUID> playersVoted, String name, byte optionNumber,  DatabaseManager databaseManager) {
+    public Option(ArrayList<UUID> playersVoted, String name, byte optionNumber) {
         this.name = name;
         this.playersVoted = playersVoted;
-        this.databaseManager = databaseManager;
         this.optionNumber = optionNumber;
     }
 
@@ -33,7 +31,7 @@ public class Option {
         return Collections.unmodifiableList(playersVoted);
     }
 
-    public void addVote(UUID voter,Poll poll) throws SQLException {
+    public void addVote(UUID voter,Poll poll, DatabaseManager databaseManager) throws SQLException {
         playersVoted.add(voter);
         databaseManager.addVote(this, poll, voter);
     }

@@ -1,6 +1,6 @@
 name: VotePlugin
 version: '${project.version}'
-main: me.tololo11.voteplugin.VotePlugin
+main: me.trololo11.voteplugin.VotePlugin
 api-version: '1.20'
 commands:
   testcommand:
