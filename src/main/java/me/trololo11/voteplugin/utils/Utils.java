@@ -1,22 +1,28 @@
 package me.trololo11.voteplugin.utils;
 
-import org.bukkit.Bukkit;
+import me.trololo11.voteplugin.managers.PollsManager;
 import org.bukkit.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 
 public class Utils {
+
+    private static char[] codeGeneratingCharacters = "abcdefghijklmnopqrstuvwxyz0123456789".toCharArray();
+
 
     public static String chat(String s){
         return ChatColor.translateAlternateColorCodes('&', s);
@@ -28,6 +34,8 @@ public class Utils {
      * @param poll The poll to print
      */
     public static void printPollToPlayer(Player player, Poll poll){
+
+        long thisTime = poll.getEndDate().getTime()-new Date().getTime();
 
         player.sendMessage(ChatColor.GREEN + poll.creator.getName() + " has just created a new poll!");
         player.sendMessage(ChatColor.GRAY + "--------------------------------------");
@@ -46,7 +54,7 @@ public class Utils {
         }
 
         player.sendMessage(" ");
-        player.sendMessage(ChatColor.GRAY + "Ends in: "+ getStringTime(poll.getEndDate().getTime()/1000, new char[]{'d', 'h'} ));
+        player.sendMessage(ChatColor.GRAY + "Ends in: "+ getStringTime(thisTime/1000, new char[]{'d', 'h', 'm'} ));
         player.sendMessage(ChatColor.GRAY + "--------------------------------------");
         player.sendMessage(ChatColor.GRAY + ChatColor.ITALIC.toString() + "(Click the option or do /vote "+poll.code+" <option> to vote)");
 
@@ -101,6 +109,22 @@ public class Utils {
         return item;
     }
 
+    public static ItemStack createEnchantedItem(Material material, String name, String localizedName, Enchantment enchantment, String... lore){
+        ItemStack item = new ItemStack(material);
+
+        ArrayList<String> loreArray = new ArrayList<>();
+
+        for(String string : lore){
+            loreArray.add(Utils.chat(string));
+        }
+
+        item.setItemMeta(getItemMeta(item.getItemMeta(), name, localizedName, loreArray));
+
+        item.addUnsafeEnchantment(enchantment, 1);
+
+        return item;
+    }
+
     private static ItemMeta getItemMeta(ItemMeta itemMeta, String displayName, String localizedName, List<String> lore){
 
         itemMeta.setDisplayName(Utils.chat(displayName));
@@ -111,7 +135,27 @@ public class Utils {
         return itemMeta;
     }
 
+    /**
+     * Generates a unique 6 character code that can be used by {@link Poll} object
+     * which doesn't already exist in the {@link PollsManager} class
+     * @param pollsManager A poll manager clas
+     * @return A unique 6 character code that isn't used anywhere else
+     */
+    public static String generateUniqueCode(PollsManager pollsManager){
+        Random mainRandom = new Random();
+        StringBuilder code;
 
+        do{
+            code = new StringBuilder();
+            for(int i=0; i < 6; i++)
+                code.append(codeGeneratingCharacters[mainRandom.nextInt(codeGeneratingCharacters.length)]);
+
+        }while(pollsManager.getAllPollCodes().contains(code.toString()));
+
+
+        return code.toString();
+
+    }
 
     /**
      * Returns a time in string based type. <br>
@@ -150,6 +194,10 @@ public class Utils {
 
         return stringBuilder.toString();
 
+    }
+
+    public static boolean isLocalizedNameEqual(ItemMeta itemMeta, String string){
+        return itemMeta.getLocalizedName().equalsIgnoreCase(string);
     }
 
     public static boolean charInArray(char[] array, char charToCheck){

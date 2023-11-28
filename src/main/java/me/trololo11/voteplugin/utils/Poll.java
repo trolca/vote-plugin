@@ -31,9 +31,8 @@ public class Poll {
     private String title;
     private Date endDate;
     private Material icon;
-    private boolean isActive;
 
-    public Poll(String code, OfflinePlayer creator, LinkedList<Option> options, String title,Material icon, Date endDate,boolean showVotes, boolean isActive) {
+    public Poll(String code, OfflinePlayer creator, LinkedList<Option> options, String title,Material icon, Date endDate,boolean showVotes) {
 
         if(code.length() != 6){
             throw new IllegalArgumentException("The code of every vote should be 6 characters long!");
@@ -50,7 +49,6 @@ public class Poll {
         this.icon = icon;
         this.endDate = endDate;
         this.showVotes = showVotes;
-        this.isActive = isActive;
     }
 
 
@@ -68,14 +66,6 @@ public class Poll {
 
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
-    }
-
-    public boolean isActive() {
-        return isActive;
-    }
-
-    public void setActive(boolean active) {
-        isActive = active;
     }
 
     public Material getIcon() {

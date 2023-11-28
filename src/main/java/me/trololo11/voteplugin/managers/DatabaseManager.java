@@ -212,7 +212,6 @@ public class DatabaseManager {
                     title,
                     icon,
                     endDate,
-                    endDate.before(new Date()),
                     showVotes);
 
             allPolls.add(poll);

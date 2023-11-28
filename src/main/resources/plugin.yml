@@ -7,3 +7,5 @@ commands:
     description: "Only a text command dont worry :>"
   vote:
     description: "Vote on a poll"
+  createpoll:
+    description: "Creates a poll"

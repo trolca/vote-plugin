@@ -1,8 +1,11 @@
 package me.trololo11.voteplugin;
 
+import me.trololo11.voteplugin.commands.CreatePollCommand;
 import me.trololo11.voteplugin.commands.TestCommand;
 import me.trololo11.voteplugin.commands.VoteCommand;
 import me.trololo11.voteplugin.commands.tabcompleters.VoteTabCompleter;
+import me.trololo11.voteplugin.listeners.MenusManager;
+import me.trololo11.voteplugin.listeners.PollCreateListener;
 import me.trololo11.voteplugin.managers.DatabaseManager;
 import me.trololo11.voteplugin.managers.PollsManager;
 import org.bukkit.Bukkit;
@@ -19,7 +22,6 @@ public final class VotePlugin extends JavaPlugin {
 
     private int timeKeepPollsLogs;
     private DatabaseManager databaseManager;
-    private PollsManager pollsManager;
 
     public VotePlugin(){
         super();
@@ -37,6 +39,7 @@ public final class VotePlugin extends JavaPlugin {
 
         timeKeepPollsLogs = getConfig().getInt("time-keep-polls-log");
 
+        PollsManager pollsManager;
         try {
             databaseManager = new DatabaseManager();
             pollsManager = new PollsManager(databaseManager);
@@ -46,8 +49,12 @@ public final class VotePlugin extends JavaPlugin {
             throw new RuntimeException(e);
         }
 
+        getServer().getPluginManager().registerEvents(new MenusManager(), this);
+        getServer().getPluginManager().registerEvents(new PollCreateListener(), this);
+
         getCommand("testcommand").setExecutor(new TestCommand(pollsManager));
         getCommand("vote").setExecutor(new VoteCommand(pollsManager, databaseManager));
+        getCommand("createpoll").setExecutor(new CreatePollCommand(pollsManager));
 
         getCommand("vote").setTabCompleter(new VoteTabCompleter());
 
