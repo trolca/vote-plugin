@@ -36,8 +36,9 @@ public class Utils {
     public static void printPollToPlayer(Player player, Poll poll){
 
         long thisTime = poll.getEndDate().getTime()-new Date().getTime();
+        thisTime++;
 
-        player.sendMessage(ChatColor.GREEN + poll.creator.getName() + " has just created a new poll!");
+        player.sendMessage(ChatColor.GREEN + poll.creator.getName() + " has created a new poll!");
         player.sendMessage(ChatColor.GRAY + "--------------------------------------");
         player.sendMessage(Utils.chat(poll.getTitle()));
         player.sendMessage(" ");

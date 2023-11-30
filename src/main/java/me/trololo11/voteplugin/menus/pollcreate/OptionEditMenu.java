@@ -1,5 +1,6 @@
-package me.trololo11.voteplugin.menus;
+package me.trololo11.voteplugin.menus.pollcreate;
 
+import me.trololo11.voteplugin.menus.PollCreateMenu;
 import me.trololo11.voteplugin.utils.Menu;
 import me.trololo11.voteplugin.utils.Utils;
 import org.bukkit.Material;
@@ -60,6 +61,7 @@ public class OptionEditMenu extends Menu {
 
         switch (item.getType()){
 
+            //Cancel changes
             case RED_DYE ->{
                 if(!Utils.isLocalizedNameEqual(item.getItemMeta(), "cancel")) return;
 
@@ -74,18 +76,21 @@ public class OptionEditMenu extends Menu {
                 pollCreateMenu.open(player);
             }
 
+            //Change option name
             case NAME_TAG -> {
                 if(!Utils.isLocalizedNameEqual(item.getItemMeta(), "change-name")) return;
 
                 new OptionNameSetMenu(this).open(player);
             }
 
+            //Change option number
             case STRING -> {
                 if(!Utils.isLocalizedNameEqual(item.getItemMeta(), "change-number")) return;
 
                 new ChangeOptionNumMenu(this, pollCreateMenu).open(player);
             }
 
+            //Confirm changes
             case GREEN_DYE -> {
                 if(!Utils.isLocalizedNameEqual(item.getItemMeta(), "confirm")) return;
                 LinkedList<String> options = pollCreateMenu.getOptions();
@@ -107,7 +112,9 @@ public class OptionEditMenu extends Menu {
         this.optionName = optionName;
     }
 
-
+    public String getOptionName() {
+        return optionName;
+    }
 
     public byte getOptionNumber() {
         return optionNumber;

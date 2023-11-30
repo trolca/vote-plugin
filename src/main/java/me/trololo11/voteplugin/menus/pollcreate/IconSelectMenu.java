@@ -1,5 +1,6 @@
-package me.trololo11.voteplugin.menus;
+package me.trololo11.voteplugin.menus.pollcreate;
 
+import me.trololo11.voteplugin.menus.PollCreateMenu;
 import me.trololo11.voteplugin.utils.InputMenu;
 import me.trololo11.voteplugin.utils.Utils;
 import net.wesjd.anvilgui.AnvilGUI;

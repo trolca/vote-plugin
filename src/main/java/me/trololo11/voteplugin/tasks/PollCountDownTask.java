@@ -5,9 +5,10 @@ import me.trololo11.voteplugin.managers.PollsManager;
 import me.trololo11.voteplugin.utils.Poll;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.sql.SQLException;
+
 /**
  * This task is responsible for timing the polls and checking if they have ended.
- *
  */
 public class PollCountDownTask extends BukkitRunnable {
 
@@ -31,9 +32,14 @@ public class PollCountDownTask extends BukkitRunnable {
 
         //If the time is 0, and we are counting minutes (so the smallest amount possible) stop the poll
         if(time <= 0 && countMinutes){
-            pollsManager.stopPoll(poll);
+            try {
+                pollsManager.stopPoll(poll);
+            } catch (SQLException e) {
+                plugin.logger.severe("Error with database while stopping the poll "+ poll.code);
+                e.printStackTrace(System.out);
+            }
             this.cancel();
-        }else if(time <= 1){
+        }else if(time <= 1 && !countMinutes){
             new PollCountDownTask(pollsManager, poll, 60, true).runTaskTimer(plugin, 1200L, 1200L);
             this.cancel();
         }

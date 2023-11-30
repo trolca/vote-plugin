@@ -7,6 +7,7 @@ import me.trololo11.voteplugin.utils.Option;
 import me.trololo11.voteplugin.utils.Poll;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 
 import java.sql.*;
 import java.util.*;
@@ -70,7 +71,7 @@ public class DatabaseManager {
         Statement statement = connection.createStatement();
 
         statement.execute("CREATE TABLE IF NOT EXISTS polls(code char(6) primary key unique not null, " +
-                "creator char(36) not null, title text,icon varchar(50) not null, end_date bigint not null, show_votes bool not null);");
+                "creator char(36) not null, title text,icon varchar(50) not null, end_date bigint not null, show_votes bool not null, active bool not null);");
 
         statement.executeUpdate("CREATE TABLE IF NOT EXISTS polls_options(code char(6) not null, option_num tinyint not null, name varchar(50), primary key(code, option_num) );");
         statement.execute("CREATE TABLE IF NOT EXISTS players_voted(uuid char(36) not null, poll_code char(6) not null, vote_option tinyint not null, primary key(uuid, poll_code))");
@@ -110,7 +111,7 @@ public class DatabaseManager {
     public void addPoll(Poll poll) throws SQLException {
         Connection connection = getConnection();
 
-        String sql = "INSERT INTO polls VALUES (?,?,?,?,?,?)";
+        String sql = "INSERT INTO polls VALUES (?,?,?,?,?,?,?)";
 
         PreparedStatement voteDataStatement = connection.prepareStatement(sql);
 
@@ -120,6 +121,7 @@ public class DatabaseManager {
         voteDataStatement.setString(4, poll.getIcon().toString());
         voteDataStatement.setLong(5, poll.getEndDate().getTime());
         voteDataStatement.setBoolean(6, poll.showVotes);
+        voteDataStatement.setBoolean(7, poll.isActive);
 
         voteDataStatement.executeUpdate();
 
@@ -164,6 +166,7 @@ public class DatabaseManager {
             UUID creator = UUID.fromString(allPollsResult.getString("creator"));
             Material icon = Material.valueOf(allPollsResult.getString("icon"));
             boolean showVotes = allPollsResult.getBoolean("show_votes");
+            boolean isActive = allPollsResult.getBoolean("active");
             LinkedList<Option> options = new LinkedList<>();
 
             //We get all the options for this poll and order them in option num because
@@ -212,7 +215,8 @@ public class DatabaseManager {
                     title,
                     icon,
                     endDate,
-                    showVotes);
+                    showVotes,
+                    isActive);
 
             allPolls.add(poll);
 
@@ -222,6 +226,24 @@ public class DatabaseManager {
         connection.close();
 
         return allPolls;
+    }
+
+    public void updatePoll(Poll poll) throws SQLException {
+        String sql = "UPDATE polls SET title = ?, icon = ?, end_date = ?, active = ? WHERE code = ?";
+
+        Connection connection = getConnection();
+        PreparedStatement statement = connection.prepareStatement(sql);
+
+        statement.setString(1, poll.getTitle());
+        statement.setString(2, poll.getIcon().toString());
+        statement.setLong(3, poll.getEndDate().getTime());
+        statement.setBoolean(4, poll.isActive);
+        statement.setString(5, poll.code);
+
+        statement.executeUpdate();
+
+        statement.close();
+        connection.close();
     }
 
     public void addVote(Option option, Poll poll, UUID voter) throws SQLException {
@@ -239,6 +261,80 @@ public class DatabaseManager {
         statement.close();
         connection.close();
     }
+
+    public ArrayList<UUID> playersSeenPoll(Poll poll) throws SQLException {
+        String sql = "SELECT uuid FROM players_seen_poll WHERE poll_code = ?";
+
+        ArrayList<UUID> playersSeen = new ArrayList<>();
+
+        Connection connection = getConnection();
+        PreparedStatement statement = connection.prepareStatement(sql);
+
+        statement.setString(1, poll.code);
+
+        ResultSet results = statement.executeQuery();
+
+        while (results.next()){
+            playersSeen.add(UUID.fromString(results.getString("uuid")));
+        }
+
+        statement.close();
+        connection.close();
+
+        return playersSeen;
+    }
+
+    public void removeEveryPlayerSeenPoll(Poll poll) throws SQLException {
+        String sql = "DELETE FROM players_seen_poll WHERE poll_code = ?";
+
+        Connection connection = getConnection();
+        PreparedStatement statement = connection.prepareStatement(sql);
+
+        statement.setString(1, poll.code);
+
+        statement.executeUpdate();
+
+        statement.close();
+        connection.close();
+
+    }
+
+    public void addPlayersSeenPoll(ArrayList<UUID> listUuid, Poll poll) throws SQLException {
+        if(listUuid.isEmpty()) return;
+
+        StringBuilder sqlBuilder = new StringBuilder("INSERT INTO players_seen_poll VALUES ");
+
+        for(UUID uuid : listUuid){
+            sqlBuilder.append("(\"").append(uuid).append("\",\"").append(poll.code).append("\"),");
+        }
+
+        String sql = sqlBuilder.substring(0, sqlBuilder.length()-1);
+
+
+        Connection connection = getConnection();
+        PreparedStatement statement = connection.prepareStatement(sql);
+
+        statement.executeUpdate();
+
+        statement.close();
+        connection.close();
+    }
+
+    public void addPlayerSeenPoll(UUID uuid, Poll poll) throws SQLException {
+        String sql = "INSERT INTO players_seen_poll VALUES (?,?)";
+
+        Connection connection = getConnection();
+        PreparedStatement statement = connection.prepareStatement(sql);
+
+        statement.setString(1, uuid.toString());
+        statement.setString(2, poll.code);
+
+        statement.executeUpdate();
+
+        statement.close();
+        connection.close();
+    }
+
 
 
 

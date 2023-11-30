@@ -2,6 +2,10 @@ package me.trololo11.voteplugin.menus;
 
 import me.trololo11.voteplugin.events.PollCreateEvent;
 import me.trololo11.voteplugin.managers.PollsManager;
+import me.trololo11.voteplugin.menus.pollcreate.EndDateSetMenu;
+import me.trololo11.voteplugin.menus.pollcreate.IconSelectMenu;
+import me.trololo11.voteplugin.menus.pollcreate.OptionEditMenu;
+import me.trololo11.voteplugin.menus.pollcreate.TitleSetMenu;
 import me.trololo11.voteplugin.utils.Menu;
 import me.trololo11.voteplugin.utils.Option;
 import me.trololo11.voteplugin.utils.Poll;
@@ -19,6 +23,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 
+/**
+ * The main poll creation menu. Is responsible for allowing players to make polls with gui
+ */
 public class PollCreateMenu extends Menu {
 
     private String pollTitle = "New poll";
@@ -41,7 +48,7 @@ public class PollCreateMenu extends Menu {
 
     @Override
     public String getMenuName(Player p) {
-        return ChatColor.GREEN + ChatColor.BOLD.toString() + "Creating poll: "+ pollTitle;
+        return Utils.chat("&a&lCreating poll: &f"+pollTitle);
     }
 
     @Override
@@ -120,25 +127,27 @@ public class PollCreateMenu extends Menu {
 
         switch (item.getType()){
 
-            case GREEN_CANDLE, BARRIER -> {
+            case GREEN_CANDLE, BARRIER -> { //Toggle show votes option
                 if(!Utils.isLocalizedNameEqual(item.getItemMeta(), "show-votes")) return;
 
                 showVotes = !showVotes;
                 setMenuItems(player);
             }
 
+            //Change title of poll
             case NAME_TAG -> {
                 if(!Utils.isLocalizedNameEqual(item.getItemMeta(), "title-select")) return;
 
                 new TitleSetMenu(this).open(player);
             }
 
+            //Options editing and deleting
             case OAK_SIGN -> {
                 if(!item.getItemMeta().getLocalizedName().startsWith("option-")) return;
 
                 byte num = Byte.parseByte(item.getItemMeta().getLocalizedName().split("-")[1]);
 
-                if(e.getClick() == ClickType.LEFT) {
+                if(e.getClick() == ClickType.LEFT) { //Left click edit right delete
                     new OptionEditMenu(this, options.get(num), num).open(player);
                 }else if(e.getClick() == ClickType.RIGHT){
                     if(options.size() == 2){
@@ -150,6 +159,7 @@ public class PollCreateMenu extends Menu {
                 }
             }
 
+            //New option create
             case GRAY_DYE -> {
                 if(!Utils.isLocalizedNameEqual(item.getItemMeta(), "new-option")) return;
 
@@ -158,18 +168,21 @@ public class PollCreateMenu extends Menu {
                 setMenuItems(player);
             }
 
+            //exit
             case RED_DYE -> {
                 if(!Utils.isLocalizedNameEqual(item.getItemMeta(), "cancel")) return;
 
                 player.closeInventory();
             }
 
+            //Change the end time
             case CLOCK -> {
                 if(!Utils.isLocalizedNameEqual(item.getItemMeta(), "end-date")) return;
 
                 new EndDateSetMenu(this, days, hours, minutes).open(player);
             }
 
+            //Confirm creation
             case GREEN_DYE -> {
                 if(!Utils.isLocalizedNameEqual(item.getItemMeta(), "confirm")) return;
 
@@ -195,7 +208,8 @@ public class PollCreateMenu extends Menu {
                         pollTitle,
                         pollIcon,
                         new Date(newTime),
-                        showVotes
+                        showVotes,
+                        true
                 );
 
                 try {

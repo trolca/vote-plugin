@@ -1,5 +1,6 @@
-package me.trololo11.voteplugin.menus;
+package me.trololo11.voteplugin.menus.pollcreate;
 
+import me.trololo11.voteplugin.menus.PollCreateMenu;
 import me.trololo11.voteplugin.utils.Menu;
 import me.trololo11.voteplugin.utils.Utils;
 import org.bukkit.Material;
@@ -56,7 +57,7 @@ public class ChangeOptionNumMenu extends Menu {
 
             ItemStack optionItem = i == optionEditMenu.getOptionNumber() ?
 
-                    Utils.createEnchantedItem(optionsMaterial, "&6Editing option "+optionNum + ": &f"+option, "editing-option-"+i, Enchantment.MENDING) :
+                    Utils.createEnchantedItem(optionsMaterial, "&6Editing option "+optionNum + ": &f"+optionEditMenu.getOptionName(), "editing-option-"+i, Enchantment.MENDING) :
 
                     Utils.createItem(optionsMaterial,  "&8Option "+optionNum+": &f" +option, "option-"+i,
                                     "&7Click to edit!");

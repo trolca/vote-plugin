@@ -4,10 +4,12 @@ import me.trololo11.voteplugin.commands.CreatePollCommand;
 import me.trololo11.voteplugin.commands.TestCommand;
 import me.trololo11.voteplugin.commands.VoteCommand;
 import me.trololo11.voteplugin.commands.tabcompleters.VoteTabCompleter;
+import me.trololo11.voteplugin.listeners.CheckPlayerSeenPolls;
 import me.trololo11.voteplugin.listeners.MenusManager;
 import me.trololo11.voteplugin.listeners.PollCreateListener;
 import me.trololo11.voteplugin.managers.DatabaseManager;
 import me.trololo11.voteplugin.managers.PollsManager;
+import me.trololo11.voteplugin.utils.Poll;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -22,6 +24,7 @@ public final class VotePlugin extends JavaPlugin {
 
     private int timeKeepPollsLogs;
     private DatabaseManager databaseManager;
+    private PollsManager pollsManager;
 
     public VotePlugin(){
         super();
@@ -39,7 +42,6 @@ public final class VotePlugin extends JavaPlugin {
 
         timeKeepPollsLogs = getConfig().getInt("time-keep-polls-log");
 
-        PollsManager pollsManager;
         try {
             databaseManager = new DatabaseManager();
             pollsManager = new PollsManager(databaseManager);
@@ -50,7 +52,8 @@ public final class VotePlugin extends JavaPlugin {
         }
 
         getServer().getPluginManager().registerEvents(new MenusManager(), this);
-        getServer().getPluginManager().registerEvents(new PollCreateListener(), this);
+        getServer().getPluginManager().registerEvents(new PollCreateListener(pollsManager), this);
+        getServer().getPluginManager().registerEvents(new CheckPlayerSeenPolls(pollsManager), this);
 
         getCommand("testcommand").setExecutor(new TestCommand(pollsManager));
         getCommand("vote").setExecutor(new VoteCommand(pollsManager, databaseManager));
@@ -62,6 +65,15 @@ public final class VotePlugin extends JavaPlugin {
 
     @Override
     public void onDisable() {
+
+        for(Poll poll : pollsManager.getPollsToUpdate()){
+            try {
+                databaseManager.updatePoll(poll);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
         databaseManager.turnOffDatabase();
     }
 
