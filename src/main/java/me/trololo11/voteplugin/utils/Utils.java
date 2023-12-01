@@ -110,6 +110,17 @@ public class Utils {
         return item;
     }
 
+    /**
+     * Creates a new {@link ItemStack} with the specified enchantment. <br>
+     * This function should only be used to create items with the enchantment glint and
+     * not for real items to enchant because <b> the enchant will not show on the item</b>
+     * @param material The material of this item
+     * @param name The name of this item (You can use alternate color codes with the '&' char)
+     * @param localizedName The localized name of this item
+     * @param enchantment The enchantment to set
+     * @param lore The lore (description) of this item
+     * @return A new {@link ItemStack} with the specified parameters
+     */
     public static ItemStack createEnchantedItem(Material material, String name, String localizedName, Enchantment enchantment, String... lore){
         ItemStack item = new ItemStack(material);
 

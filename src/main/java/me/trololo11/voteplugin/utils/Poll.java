@@ -15,12 +15,14 @@ import java.util.*;
  *     <b>The code must always be 6 characters long and it should contain only numbers and english letters!
  *     (ex. 32be1c)</b></li>
  *     <li>The creator of this vote. This is stored as {@link OfflinePlayer} values</li>
- *     <li>An array list of all of the options that players can vote on in this poll</li>
+ *     <li>An array list of all of the {@link Option} objects that players can vote on in this poll</li>
  *     <li>The title of this poll</li>
+ *     <li>The icon of this poll stored in {@link Material}</li>
  *     <li>When the poll comes to an end</li>
  *     <li>Does the poll show the amount of votes</li>
  *     <li>Is the poll active</li>
  * </ul>
+ * @see Option
  */
 public class Poll {
 
@@ -39,7 +41,7 @@ public class Poll {
             throw new IllegalArgumentException("The code of every vote should be 6 characters long!");
         }
 
-        if(options.size() <= 1){
+        if(options.size() < 2){
             throw new IllegalArgumentException("There have to be at least 2 options to create a poll!");
         }
 
@@ -74,6 +76,11 @@ public class Poll {
         return icon;
     }
 
+    /**
+     * Checks if the player has voted for this poll or not.
+     * @param player The player to check
+     * @return True if the player has voted false if not
+     */
     public boolean hasVoted(Player player){
 
         for(Option option : options){
@@ -84,6 +91,10 @@ public class Poll {
 
     }
 
+    /**
+     * Gets the option with the most amount of votes.
+     * @return The option with the largest number of votes
+     */
     public Option getWinningOption(){
 
         int largestVotes = 0;
@@ -101,6 +112,10 @@ public class Poll {
 
     }
 
+    /**
+     * Gets the total amount of votes from all the options.
+     * @return The total amount of votes that have been voted in this poll
+     */
     public long getTotalVotes(){
         long allVotes = 0;
 

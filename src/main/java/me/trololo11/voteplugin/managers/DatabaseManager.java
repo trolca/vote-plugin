@@ -13,6 +13,10 @@ import java.sql.*;
 import java.util.*;
 import java.util.Date;
 
+/**
+ * This class is responsible for connection and modifying the sql database.
+ * This class should be used for adding or updating values in the database
+ */
 public class DatabaseManager {
 
     private VotePlugin plugin = VotePlugin.getPlugin();
@@ -228,6 +232,11 @@ public class DatabaseManager {
         return allPolls;
     }
 
+    /**
+     * Updates the modifiable data of the poll saved in the polls table in database
+     * @param poll The poll you want to update with new values
+     * @throws SQLException On connection error
+     */
     public void updatePoll(Poll poll) throws SQLException {
         String sql = "UPDATE polls SET title = ?, icon = ?, end_date = ?, active = ? WHERE code = ?";
 
@@ -246,6 +255,14 @@ public class DatabaseManager {
         connection.close();
     }
 
+    /**
+     * Adds a vote for the player for the specified option in the
+     * sql database
+     * @param option The option you want to add the vote to
+     * @param poll The poll where the option is present
+     * @param voter The uuid of the player that voted on this option
+     * @throws SQLException On connection error to the sql database
+     */
     public void addVote(Option option, Poll poll, UUID voter) throws SQLException {
         String sql = "INSERT INTO players_voted VALUES (?,?,?)";
 
@@ -262,6 +279,13 @@ public class DatabaseManager {
         connection.close();
     }
 
+    /**
+     * Gets all the players that already saw the specified poll
+     * (Aka the poll was printed for them on chat).
+     * @param poll The poll to check who saw
+     * @return An ArrayList of UUID of all the players that saw the poll
+     * @throws SQLException On database connection error
+     */
     public ArrayList<UUID> playersSeenPoll(Poll poll) throws SQLException {
         String sql = "SELECT uuid FROM players_seen_poll WHERE poll_code = ?";
 
@@ -284,6 +308,12 @@ public class DatabaseManager {
         return playersSeen;
     }
 
+    /**
+     * Removes every record of players that saw the specified poll from the database. <br>
+     * This should be only used when the poll ends and players need to see the results of the poll.
+     * @param poll The poll to remove the players that saw
+     * @throws SQLException On database connection error
+     */
     public void removeEveryPlayerSeenPoll(Poll poll) throws SQLException {
         String sql = "DELETE FROM players_seen_poll WHERE poll_code = ?";
 
@@ -299,6 +329,13 @@ public class DatabaseManager {
 
     }
 
+    /**
+     * Adds all the uuid of players from the list to the players that already saw the
+     * specified poll.
+     * @param listUuid An ArrayList of UUID of all the players that have already seen the poll
+     * @param poll The poll that players saw
+     * @throws SQLException On database connection error
+     */
     public void addPlayersSeenPoll(ArrayList<UUID> listUuid, Poll poll) throws SQLException {
         if(listUuid.isEmpty()) return;
 
@@ -320,6 +357,12 @@ public class DatabaseManager {
         connection.close();
     }
 
+    /**
+     * Adds the uuid of the player to the database that have already seen the specified poll.
+     * @param uuid The uuid of the player
+     * @param poll The poll that they saw
+     * @throws SQLException On database connection error
+     */
     public void addPlayerSeenPoll(UUID uuid, Poll poll) throws SQLException {
         String sql = "INSERT INTO players_seen_poll VALUES (?,?)";
 
