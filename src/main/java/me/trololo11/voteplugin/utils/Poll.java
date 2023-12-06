@@ -112,6 +112,20 @@ public class Poll {
 
     }
 
+
+    public String getEndDateString(){
+        long timeDifference = endDate.getTime() - new Date().getTime();
+
+        if(timeDifference <= 0) return "Already ended";
+
+        String timeString = Utils.getStringTime(timeDifference/1000, new char[]{'d', 'h', 'm'});
+
+        if(timeString.isBlank())
+            timeString = "1m";
+
+        return timeString;
+    }
+
     /**
      * Gets the total amount of votes from all the options.
      * @return The total amount of votes that have been voted in this poll

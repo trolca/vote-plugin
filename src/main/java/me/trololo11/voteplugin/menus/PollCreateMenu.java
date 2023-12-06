@@ -2,10 +2,10 @@ package me.trololo11.voteplugin.menus;
 
 import me.trololo11.voteplugin.events.PollCreateEvent;
 import me.trololo11.voteplugin.managers.PollsManager;
-import me.trololo11.voteplugin.menus.pollcreate.EndDateSetMenu;
-import me.trololo11.voteplugin.menus.pollcreate.IconSelectMenu;
-import me.trololo11.voteplugin.menus.pollcreate.OptionEditMenu;
-import me.trololo11.voteplugin.menus.pollcreate.TitleSetMenu;
+import me.trololo11.voteplugin.menus.pollcreatesubmenus.EndDateSetMenu;
+import me.trololo11.voteplugin.menus.pollcreatesubmenus.IconSelectMenu;
+import me.trololo11.voteplugin.menus.pollcreatesubmenus.OptionEditMenu;
+import me.trololo11.voteplugin.menus.pollcreatesubmenus.TitleSetMenu;
 import me.trololo11.voteplugin.utils.Menu;
 import me.trololo11.voteplugin.utils.Option;
 import me.trololo11.voteplugin.utils.Poll;
@@ -53,7 +53,7 @@ public class PollCreateMenu extends Menu {
 
     @Override
     public int getSlots() {
-        return 5*9;
+        return 45;
     }
 
     @Override

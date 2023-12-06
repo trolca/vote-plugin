@@ -1,4 +1,4 @@
-package me.trololo11.voteplugin.menus.pollcreate;
+package me.trololo11.voteplugin.menus.pollcreatesubmenus;
 
 import me.trololo11.voteplugin.menus.PollCreateMenu;
 import me.trololo11.voteplugin.utils.Menu;

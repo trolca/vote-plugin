@@ -9,3 +9,5 @@ commands:
     description: "Vote on a poll"
   createpoll:
     description: "Creates a poll"
+  seepolls:
+    description: "See all polls"

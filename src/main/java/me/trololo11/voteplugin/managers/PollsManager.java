@@ -1,7 +1,8 @@
 package me.trololo11.voteplugin.managers;
 
 import me.trololo11.voteplugin.VotePlugin;
-import me.trololo11.voteplugin.tasks.PollCountDownTask;
+import me.trololo11.voteplugin.tasks.ChangeHistoricPoll;
+import me.trololo11.voteplugin.tasks.PollStopTask;
 import me.trololo11.voteplugin.utils.Poll;
 import me.trololo11.voteplugin.utils.Utils;
 import org.bukkit.Bukkit;
@@ -17,12 +18,15 @@ import java.util.*;
  */
 public class PollsManager {
     private HashMap<String, Poll> activePolls = new HashMap<>();
+    private HashMap<String, Poll> allPolls = new HashMap<>();
     private HashMap<Poll, ArrayList<UUID> > playersPollsSeenHashMap = new HashMap<>();
     private DatabaseManager databaseManager;
     private ArrayList<Poll> historicPolls = new ArrayList<>();
-    private ArrayList<Poll> allPolls = new ArrayList<>();
-    private ArrayList<String> allCodes = new ArrayList<>();
+    private ArrayList<Poll> allPollsList = new ArrayList<>();
     private ArrayList<Poll> pollsToUpdate = new ArrayList<>();
+    private ArrayList<Poll> recentlyFinishedPolls = new ArrayList<>();
+
+    private ArrayList<String> allCodes = new ArrayList<>();
 
     private VotePlugin plugin = VotePlugin.getPlugin();
 
@@ -63,8 +67,11 @@ public class PollsManager {
 
         });
 
-        this.allPolls.addAll(activePolls.values());
-        this.allPolls.addAll(historicPolls);
+        this.allPolls.putAll(activePolls);
+        historicPolls.forEach(poll -> this.allPolls.put(poll.code, poll));
+
+        allPollsList.addAll(activePolls.values());
+        allPollsList.addAll(historicPolls);
 
     }
 
@@ -76,6 +83,10 @@ public class PollsManager {
         return activePolls.values();
     }
 
+    public boolean playerSawPoll(UUID uuid, Poll poll){
+        return getAllPlayerSawPoll(poll).contains(uuid);
+    }
+
     /**
      * Adds a new poll to the plugin and to the sql database.
      * @param poll The poll to add
@@ -84,13 +95,15 @@ public class PollsManager {
     public void addPoll(Poll poll) throws SQLException {
         databaseManager.addPoll(poll);
         activePolls.put(poll.code,poll);
+        playersPollsSeenHashMap.put(poll, new ArrayList<>());
         allCodes.add(poll.code);
-        allPolls.add(poll);
+        allPolls.put(poll.code, poll);
+        allPollsList.add(poll);
         createStopTask(poll);
     }
 
     /**
-     * This function creates a {@link PollCountDownTask} for the provided poll.
+     * This function creates a {@link PollStopTask} for the provided poll.
      * @param poll The poll to create the task for
      */
     private void createStopTask(Poll poll){
@@ -98,35 +111,21 @@ public class PollsManager {
         Date endDate = poll.getEndDate();
         long timeBetween = endDate.getTime() - new Date().getTime();
 
-
-        //If the time between today's date and  is more that an hour then create a countdown task
-        //which counts hours but if it's not then create task which counts minutes
-        if(timeBetween > 3600000L) {
-            int hoursLeft = (int) Math.floor(timeBetween / 3600000.0);
-            long startDelay = ((timeBetween - (hoursLeft * 3600000L)) / 1000) * 20;
-
-
-            PollCountDownTask pollCountDownTask = new PollCountDownTask(this, poll, hoursLeft + 1, false);
-            pollCountDownTask.runTaskTimer(plugin, startDelay, 72000L);
-        }else{
-            int minutesLeft = (int) Math.floor(timeBetween / 60000.0);
-            long startDelay = ((timeBetween - (minutesLeft * 60000L)) / 1000) * 20;
-
-
-            PollCountDownTask pollCountDownTask = new PollCountDownTask(this, poll, minutesLeft+1, true);
-            pollCountDownTask.runTaskTimer(plugin, startDelay, 1200L);
-        }
-
+        new PollStopTask(this, poll).runTaskLater(plugin, (timeBetween/1000)*20 );
     }
 
     /**
-     * Adds the poll to the historic polls arraylist and displays
+     * Add the poll to the recently finished polls list
+     * and creates a {@link ChangeHistoricPoll} task and displays
      * the results of this poll to every online player
      * @param poll The poll to stop
      */
     public void stopPoll(Poll poll) throws SQLException {
-        historicPolls.add(poll);
+        poll.isActive = false;
         activePolls.remove(poll.code);
+        recentlyFinishedPolls.add(poll);
+
+        new ChangeHistoricPoll(this, poll).runTaskLater(plugin, 72000L);
 
         databaseManager.removeEveryPlayerSeenPoll(poll);
 
@@ -138,6 +137,16 @@ public class PollsManager {
 
         databaseManager.addPlayersSeenPoll(playerSeen, poll);
 
+    }
+
+    /**
+     * Removes the provided poll from the recently finished polls list and
+     * adds it to the historic polls
+     * @param poll The poll to replace
+     */
+    public void replaceRecentlyFinishedPoll(Poll poll){
+        recentlyFinishedPolls.remove(poll);
+        historicPolls.add(poll);
     }
 
     /**
@@ -201,7 +210,16 @@ public class PollsManager {
      * @return An <b>unmodifiable</b> list aff al polls
      */
     public List<Poll> getAllPolls(){
-        return Collections.unmodifiableList(allPolls);
+        return Collections.unmodifiableList(allPollsList);
+    }
+
+    /**
+     * Gets the poll from the provided code.
+     * @param code The code to get the {@link Poll} class to
+     * @return <b>ANY</b> type of poll active or unactive
+     */
+    public Poll getPoll(String code){
+        return allPolls.get(code);
     }
 
     /**
@@ -210,6 +228,14 @@ public class PollsManager {
      */
     public ArrayList<Poll> getPollsToUpdate() {
         return pollsToUpdate;
+    }
+
+    /**
+     * Gets all the polls that have been recently finished (to an hour ago)
+     * @return An <b>unmodifiable</b> list of all the recently finished polls
+     */
+    public List<Poll> getRecentlyFinishedPolls(){
+        return Collections.unmodifiableList(recentlyFinishedPolls);
     }
 
 }

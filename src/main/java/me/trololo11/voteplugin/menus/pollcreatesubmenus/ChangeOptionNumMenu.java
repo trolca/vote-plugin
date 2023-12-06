@@ -1,4 +1,4 @@
-package me.trololo11.voteplugin.menus.pollcreate;
+package me.trololo11.voteplugin.menus.pollcreatesubmenus;
 
 import me.trololo11.voteplugin.menus.PollCreateMenu;
 import me.trololo11.voteplugin.utils.Menu;
@@ -43,14 +43,13 @@ public class ChangeOptionNumMenu extends Menu {
             inventory.setItem(i, filler);
         }
 
+        int extraI = 0;
+
         for(int i=0; i < options.size(); i++){
 
-            int slot; //sets the slot number for options
-            if (i < 4) slot = 9 * (i + 1);
-            else if (i < 8) slot = (9 * (i - 3)) + 3;
-            else slot = (9 * (i - 7)) + 6;
+            if(i % 3 == 0 && i != 0) extraI++;
 
-            if (slot >= 45) slot = 42;
+            int slot =  ( (i+1) * 9 )- 27*extraI + 2 * extraI;
 
             String option = options.get(i);
             int optionNum = i+1;
@@ -60,7 +59,7 @@ public class ChangeOptionNumMenu extends Menu {
                     Utils.createEnchantedItem(optionsMaterial, "&6Editing option "+optionNum + ": &f"+optionEditMenu.getOptionName(), "editing-option-"+i, Enchantment.MENDING) :
 
                     Utils.createItem(optionsMaterial,  "&8Option "+optionNum+": &f" +option, "option-"+i,
-                                    "&7Click to edit!");
+                                    "&7Click to change place to");
 
             inventory.setItem(slot, optionItem);
         }

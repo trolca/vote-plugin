@@ -7,14 +7,15 @@ import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
@@ -34,10 +35,6 @@ public class Utils {
      * @param poll The poll to print
      */
     public static void printPollToPlayer(Player player, Poll poll){
-
-        long thisTime = poll.getEndDate().getTime()-new Date().getTime();
-        thisTime++;
-
         player.sendMessage(ChatColor.GREEN + poll.creator.getName() + " has created a new poll!");
         player.sendMessage(ChatColor.GRAY + "--------------------------------------");
         player.sendMessage(Utils.chat(poll.getTitle()));
@@ -55,7 +52,7 @@ public class Utils {
         }
 
         player.sendMessage(" ");
-        player.sendMessage(ChatColor.GRAY + "Ends in: "+ getStringTime(thisTime/1000, new char[]{'d', 'h', 'm'} ));
+        player.sendMessage(ChatColor.GRAY + "Ends in: "+ poll.getEndDateString());
         player.sendMessage(ChatColor.GRAY + "--------------------------------------");
         player.sendMessage(ChatColor.GRAY + ChatColor.ITALIC.toString() + "(Click the option or do /vote "+poll.code+" <option> to vote)");
 
@@ -70,7 +67,7 @@ public class Utils {
         long allVotes = poll.getTotalVotes();
         Option wonOption = poll.getWinningOption();
 
-        player.sendMessage(ChatColor.GREEN + "Poll "+ poll.getTitle() + " has finished!");
+        player.sendMessage(ChatColor.GREEN + "Poll "+ ChatColor.RESET + poll.getTitle() + ChatColor.GREEN + " has finished!");
         player.sendMessage("");
         player.sendMessage(ChatColor.GRAY + ChatColor.BOLD.toString() + "Results:");
         for(Option option : poll.getAllOptions()){
@@ -79,9 +76,9 @@ public class Utils {
 
             if(amountOfVotes == wonOption.getAmountOfVotes()){
                 player.sendMessage(ChatColor.GRAY.toString() + option.getOptionNumber() + " - "
-                        + ChatColor.GOLD + ChatColor.BOLD + option.getName() + Utils.chat("&7&o("+percentageVotes+"%)"));
+                        + ChatColor.GOLD + ChatColor.BOLD + option.getName() + Utils.chat(" &7&o("+percentageVotes+"%)"));
             }else{
-                player.sendMessage(Utils.chat("&7"+option.getOptionNumber()+" - &f"+ option.getName() + "&7&o("+percentageVotes+"%)"));
+                player.sendMessage(Utils.chat("&7"+option.getOptionNumber()+" - &f"+ option.getName() + " &7&o("+percentageVotes+"%)"));
             }
         }
         player.sendMessage("");
@@ -137,6 +134,24 @@ public class Utils {
         return item;
     }
 
+    public static ItemStack createPlayerHead(OfflinePlayer owner, String name, String localizedName, String... lore){
+        ItemStack item = new ItemStack(Material.PLAYER_HEAD);
+
+        ArrayList<String> loreArray = new ArrayList<>();
+
+        for(String string : lore){
+            loreArray.add(Utils.chat(string));
+        }
+
+        SkullMeta skullMeta = (SkullMeta) getItemMeta(item.getItemMeta(), name, localizedName, loreArray);
+
+        skullMeta.setOwningPlayer(owner);
+
+        item.setItemMeta(skullMeta);
+
+        return item;
+    }
+
     private static ItemMeta getItemMeta(ItemMeta itemMeta, String displayName, String localizedName, List<String> lore){
 
         itemMeta.setDisplayName(Utils.chat(displayName));
@@ -150,7 +165,7 @@ public class Utils {
     /**
      * Generates a unique 6 character code that can be used by {@link Poll} object
      * which doesn't already exist in the {@link PollsManager} class
-     * @param pollsManager A poll manager clas
+     * @param pollsManager A poll manager class
      * @return A unique 6 character code that isn't used anywhere else
      */
     public static String generateUniqueCode(PollsManager pollsManager){
@@ -199,10 +214,10 @@ public class Utils {
         long seconds = time;
         StringBuilder stringBuilder = new StringBuilder();
 
-        if(days > 0 && charInArray(timeRange, 'd')) stringBuilder.append(days+"d");
-        if(hours > 0 && charInArray(timeRange, 'h')) stringBuilder.append(hours+"h");
-        if(minutes > 0 && charInArray(timeRange, 'm')) stringBuilder.append(minutes+"m");
-        if(seconds > 0 && charInArray(timeRange, 's')) stringBuilder.append(seconds+"s");
+        if(days > 0 && charInArray(timeRange, 'd')) stringBuilder.append(days).append("d");
+        if(hours > 0 && charInArray(timeRange, 'h')) stringBuilder.append(hours).append("h");
+        if(minutes > 0 && charInArray(timeRange, 'm')) stringBuilder.append(minutes).append("m");
+        if(seconds > 0 && charInArray(timeRange, 's')) stringBuilder.append(seconds).append("s");
 
         return stringBuilder.toString();
 

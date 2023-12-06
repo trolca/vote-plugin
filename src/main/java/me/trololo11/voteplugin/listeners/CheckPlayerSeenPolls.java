@@ -17,7 +17,7 @@ import java.util.UUID;
 /**
  * This class is responsible for managing which polls player didn't see and
  * showing them to the player. It listens for a player joining and
- * uses {@link PollsManager} to check is player have seen all of the polls
+ * uses {@link PollsManager} to check is player have seen all the polls
  */
 public class CheckPlayerSeenPolls implements Listener {
 
@@ -37,7 +37,6 @@ public class CheckPlayerSeenPolls implements Listener {
 
             if(!playersSeen.contains(player.getUniqueId())){
                 unseenPolls.add(poll);
-                pollsManager.addPlayerSawPoll(player.getUniqueId(), poll);
             }
 
 
@@ -54,6 +53,7 @@ public class CheckPlayerSeenPolls implements Listener {
             else
                 Utils.printPollResultsToPlayer(player, poll);
 
+            pollsManager.addPlayerSawPoll(player.getUniqueId(), poll);
         }
 
 
