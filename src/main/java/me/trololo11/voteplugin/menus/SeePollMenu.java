@@ -28,7 +28,7 @@ public class SeePollMenu extends Menu {
     }
 
     @Override
-    public String getMenuName(Player player) {
+    public String getMenuName() {
         return ChatColor.GREEN + ChatColor.BOLD.toString() + "Poll: "+ Utils.chat("&r"+poll.getTitle());
     }
 
@@ -73,7 +73,7 @@ public class SeePollMenu extends Menu {
             boolean playerVotedOnThisOption = hasVoted && option.getPlayersVoted().contains(player.getUniqueId());
 
             String optionPercentageS = "";
-            if(!poll.isActive || poll.showVotes){
+            if(!poll.isActive || poll.getPollSettings().showVotes){
                 int optionVotes = option.getAmountOfVotes();
                 optionPercentageS = ChatColor.GRAY + " ("+((int) ( (double) optionVotes/allVotes )*100) + "%)";
             }

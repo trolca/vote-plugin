@@ -25,7 +25,7 @@ public class OptionEditMenu extends Menu {
     }
 
     @Override
-    public String getMenuName(Player p) {
+    public String getMenuName() {
         return Utils.chat("&7Editing option: &f"+optionName);
     }
 

@@ -5,9 +5,9 @@ import com.zaxxer.hikari.HikariDataSource;
 import me.trololo11.voteplugin.VotePlugin;
 import me.trololo11.voteplugin.utils.Option;
 import me.trololo11.voteplugin.utils.Poll;
+import me.trololo11.voteplugin.utils.PollSettings;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 
 import java.sql.*;
 import java.util.*;
@@ -75,12 +75,14 @@ public class DatabaseManager {
         Statement statement = connection.createStatement();
 
         statement.execute("CREATE TABLE IF NOT EXISTS polls(code char(6) primary key unique not null, " +
-                "creator char(36) not null, title text,icon varchar(50) not null, end_date bigint not null, show_votes bool not null, active bool not null);");
+                "creator char(36) not null, title text,icon varchar(50) not null, end_date bigint not null, active bool not null);");
 
         statement.executeUpdate("CREATE TABLE IF NOT EXISTS polls_options(code char(6) not null, option_num tinyint not null, name varchar(50), primary key(code, option_num) );");
         statement.execute("CREATE TABLE IF NOT EXISTS players_voted(uuid char(36) not null, poll_code char(6) not null, vote_option tinyint not null, primary key(uuid, poll_code))");
         statement.execute("CREATE TABLE IF NOT EXISTS players_seen_poll(uuid char(36) not null, poll_code char(6) not null," +
                 "PRIMARY KEY(uuid, poll_code), FOREIGN KEY (poll_code) REFERENCES polls(code))");
+        statement.execute("CREATE TABLE IF NOT EXISTS poll_settings(poll_code char(6) primary key not null, show_votes bool, show_on_join bool, change_votes bool, remind_votes bool," +
+                "FOREIGN KEY (poll_code) REFERENCES polls(code))");
 
         statement.execute("CREATE TABLE IF NOT EXISTS has_created_keys(has bool)");
 
@@ -115,7 +117,7 @@ public class DatabaseManager {
     public void addPoll(Poll poll) throws SQLException {
         Connection connection = getConnection();
 
-        String sql = "INSERT INTO polls VALUES (?,?,?,?,?,?,?)";
+        String sql = "INSERT INTO polls VALUES (?,?,?,?,?,?)";
 
         PreparedStatement voteDataStatement = connection.prepareStatement(sql);
 
@@ -124,8 +126,7 @@ public class DatabaseManager {
         voteDataStatement.setString(3, poll.getTitle());
         voteDataStatement.setString(4, poll.getIcon().toString());
         voteDataStatement.setLong(5, poll.getEndDate().getTime());
-        voteDataStatement.setBoolean(6, poll.showVotes);
-        voteDataStatement.setBoolean(7, poll.isActive);
+        voteDataStatement.setBoolean(6, poll.isActive);
 
         voteDataStatement.executeUpdate();
 
@@ -143,6 +144,18 @@ public class DatabaseManager {
 
         statement.executeUpdate();
 
+        PollSettings pollSettings = poll.getPollSettings();
+
+        PreparedStatement pollSettingsStatement = connection.prepareStatement("INSERT INTO poll_settings VALUES (?,?,?,?,?)");
+        pollSettingsStatement.setString(1, poll.code);
+        pollSettingsStatement.setBoolean(2, pollSettings.showVotes);
+        pollSettingsStatement.setBoolean(3, pollSettings.showOnJoin);
+        pollSettingsStatement.setBoolean(4, pollSettings.changeVotes);
+        pollSettingsStatement.setBoolean(5, pollSettings.remindVote);
+
+        pollSettingsStatement.executeUpdate();
+
+        pollSettingsStatement.close();
         voteDataStatement.close();
         statement.close();
         connection.close();
@@ -169,7 +182,6 @@ public class DatabaseManager {
             String title = allPollsResult.getString("title");
             UUID creator = UUID.fromString(allPollsResult.getString("creator"));
             Material icon = Material.valueOf(allPollsResult.getString("icon"));
-            boolean showVotes = allPollsResult.getBoolean("show_votes");
             boolean isActive = allPollsResult.getBoolean("active");
             LinkedList<Option> options = new LinkedList<>();
 
@@ -177,6 +189,7 @@ public class DatabaseManager {
             //players are voting using these numbers, and it is really important to have them in the same order
             //each time
             PreparedStatement optionsStatement = connection.prepareStatement("SELECT * FROM polls_options WHERE code = ? ORDER BY option_num ASC");
+
             optionsStatement.setString(1, code);
             ResultSet optionsResults = optionsStatement.executeQuery();
 
@@ -213,13 +226,31 @@ public class DatabaseManager {
 
             optionsStatement.close();
 
+            //Getting the poll option object
+            PreparedStatement settingsStatement = connection.prepareStatement("SELECT * FROM poll_settings WHERE poll_code = ?");
+            settingsStatement.setString(1, code);
+
+            ResultSet settingsResults = settingsStatement.executeQuery();
+
+            settingsResults.next();
+
+            PollSettings pollSettings = new PollSettings(
+                    settingsResults.getBoolean("show_votes"),
+                    settingsResults.getBoolean("show_on_join"),
+                    settingsResults.getBoolean("change_votes"),
+                    settingsResults.getBoolean("remind_votes")
+            );
+
+            settingsResults.close();
+            settingsStatement.close();
+
             Poll poll = new Poll(code,
                     Bukkit.getOfflinePlayer(creator),
                     options,
                     title,
                     icon,
                     endDate,
-                    showVotes,
+                    pollSettings,
                     isActive);
 
             allPolls.add(poll);
@@ -251,6 +282,20 @@ public class DatabaseManager {
 
         statement.executeUpdate();
 
+        PollSettings pollSettings = poll.getPollSettings();
+
+        PreparedStatement settingsStatement = connection.prepareStatement("UPDATE poll_settings SET show_votes = ?, show_on_join = ?, change_votes = ?, remind_votes = ? " +
+                "WHERE poll_code = ?");
+
+        settingsStatement.setBoolean(1, pollSettings.showVotes);
+        settingsStatement.setBoolean(2, pollSettings.showOnJoin);
+        settingsStatement.setBoolean(3, pollSettings.changeVotes);
+        settingsStatement.setBoolean(4, pollSettings.remindVote);
+        settingsStatement.setString(5, poll.code);
+
+        settingsStatement.executeUpdate();
+
+        settingsStatement.close();
         statement.close();
         connection.close();
     }

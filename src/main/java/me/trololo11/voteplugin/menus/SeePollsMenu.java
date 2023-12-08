@@ -34,7 +34,7 @@ public class SeePollsMenu extends Menu {
     }
 
     @Override
-    public String getMenuName(Player p) {
+    public String getMenuName() {
         return ChatColor.GREEN + ChatColor.BOLD.toString() + "Seeing polls";
     }
 
@@ -100,7 +100,7 @@ public class SeePollsMenu extends Menu {
             for(Option option : poll.getAllOptions()){
 
                 String optionPercentageS = "";
-                if(!poll.isActive || poll.showVotes){
+                if(!poll.isActive || poll.getPollSettings().showVotes){
                     int optionVotes = option.getAmountOfVotes();
                     optionPercentageS = ChatColor.GRAY + " ("+((int) ( (double) optionVotes/allVotes )*100) + "%)";
                 }
@@ -111,7 +111,7 @@ public class SeePollsMenu extends Menu {
                         ChatColor.GREEN + ChatColor.stripColor(optionName) + " (voted on)" : optionName) + optionPercentageS);
 
             }
-            if(!poll.isActive || poll.showVotes)
+            if(!poll.isActive || poll.getPollSettings().showVotes)
                 lore.add(ChatColor.DARK_GRAY + "Total votes: "+ allVotes);
             lore.add(ChatColor.YELLOW + "Ends in: " + poll.getEndDateString());
             lore.add("");

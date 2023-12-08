@@ -25,7 +25,7 @@ public class EndDateSetMenu extends Menu {
     }
 
     @Override
-    public String getMenuName(Player p) {
+    public String getMenuName() {
         return ChatColor.GOLD + ChatColor.BOLD.toString() + "Set end time for poll";
     }
 

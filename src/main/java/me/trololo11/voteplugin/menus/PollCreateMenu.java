@@ -2,14 +2,8 @@ package me.trololo11.voteplugin.menus;
 
 import me.trololo11.voteplugin.events.PollCreateEvent;
 import me.trololo11.voteplugin.managers.PollsManager;
-import me.trololo11.voteplugin.menus.pollcreatesubmenus.EndDateSetMenu;
-import me.trololo11.voteplugin.menus.pollcreatesubmenus.IconSelectMenu;
-import me.trololo11.voteplugin.menus.pollcreatesubmenus.OptionEditMenu;
-import me.trololo11.voteplugin.menus.pollcreatesubmenus.TitleSetMenu;
-import me.trololo11.voteplugin.utils.Menu;
-import me.trololo11.voteplugin.utils.Option;
-import me.trololo11.voteplugin.utils.Poll;
-import me.trololo11.voteplugin.utils.Utils;
+import me.trololo11.voteplugin.menus.pollcreatesubmenus.*;
+import me.trololo11.voteplugin.utils.*;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -31,7 +25,7 @@ public class PollCreateMenu extends Menu {
     private String pollTitle = "New poll";
     private Material pollIcon = Material.PAINTING;
     private LinkedList<String> options = new LinkedList<>();
-    private boolean showVotes = true;
+    private PollSettings pollSettings;
     private PollsManager pollsManager;
     private int days, hours, minutes;
 
@@ -44,10 +38,12 @@ public class PollCreateMenu extends Menu {
         this.hours = 1;
         this.minutes = 0;
 
+        this.pollSettings = new PollSettings(true, true, false, false);
+
     }
 
     @Override
-    public String getMenuName(Player p) {
+    public String getMenuName() {
         return Utils.chat("&a&lCreating poll: &f"+pollTitle);
     }
 
@@ -62,8 +58,7 @@ public class PollCreateMenu extends Menu {
         ItemStack iconSelect = Utils.createItem(pollIcon, "&e&lClick to select the icon", "icon-select");
         ItemStack cancel = Utils.createItem(Material.RED_DYE, "&c&lCancel", "cancel");
         ItemStack confirm = Utils.createItem(Material.GREEN_DYE, "&a&lConfirm", "confirm");
-        ItemStack showVotesButton = Utils.createItem(showVotes ? Material.GREEN_CANDLE : Material.BARRIER,
-                showVotes ? "&aShow votes: &lYes&r&2/No" : "&aShow votes: &r&2Yes/&a&lNo", "show-votes");
+        ItemStack showVotesButton = Utils.createItem(Material.LIGHT_GRAY_DYE, "&7&lSettings", "settings");
         ItemStack titleSelect = Utils.createItem(Material.NAME_TAG, "&6&lSet title", "title-select");
         ItemStack newOption = Utils.createItem(Material.GRAY_DYE, "&7&oCreate a new option", "new-option");
         ItemStack setEndDate = Utils.createItem(Material.CLOCK, "&6&lSet end date", "end-date", "&6This polls will end in:", "&e"+days+"d"+hours+"h"+minutes+"m");
@@ -127,11 +122,10 @@ public class PollCreateMenu extends Menu {
 
         switch (item.getType()){
 
-            case GREEN_CANDLE, BARRIER -> { //Toggle show votes option
-                if(!Utils.isLocalizedNameEqual(item.getItemMeta(), "show-votes")) return;
+            case LIGHT_GRAY_DYE -> { //Settings menu
+                if(!Utils.isLocalizedNameEqual(item.getItemMeta(), "settings")) return;
 
-                showVotes = !showVotes;
-                setMenuItems(player);
+                new PollSettingsMenu(this ,pollSettings).open(player);
             }
 
             //Change title of poll
@@ -208,7 +202,7 @@ public class PollCreateMenu extends Menu {
                         pollTitle,
                         pollIcon,
                         new Date(newTime),
-                        showVotes,
+                        pollSettings,
                         true
                 );
 

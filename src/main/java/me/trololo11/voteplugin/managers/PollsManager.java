@@ -127,6 +127,7 @@ public class PollsManager {
 
         new ChangeHistoricPoll(this, poll).runTaskLater(plugin, 72000L);
 
+
         databaseManager.removeEveryPlayerSeenPoll(poll);
 
         ArrayList<UUID> playerSeen = new ArrayList<>();
@@ -136,6 +137,7 @@ public class PollsManager {
         }
 
         databaseManager.addPlayersSeenPoll(playerSeen, poll);
+        playersPollsSeenHashMap.put(poll, playerSeen);
 
     }
 

@@ -15,17 +15,17 @@ public abstract class Menu implements InventoryHolder {
 
     protected Inventory inventory;
 
-    public abstract String getMenuName(Player player);
+    public abstract String getMenuName();
 
     public abstract int getSlots();
 
     //let each menu decide what items are to be placed in the inventory menu
-    public abstract void setMenuItems(Player p);
+    public abstract void setMenuItems(Player player);
 
 
     public void open(Player player) {
 
-        inventory = Bukkit.createInventory(this, getSlots(), getMenuName(player));
+        inventory = Bukkit.createInventory(this, getSlots(), getMenuName());
 
         this.setMenuItems(player);
 
