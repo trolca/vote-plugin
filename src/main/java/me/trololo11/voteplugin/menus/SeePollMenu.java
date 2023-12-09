@@ -12,19 +12,18 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
+import javax.annotation.Nullable;
 import java.sql.SQLException;
 import java.util.List;
 
 public class SeePollMenu extends Menu {
 
     private SeePollsMenu seePollsMenu;
-    private DatabaseManager databaseManager;
     private Poll poll;
 
-    public SeePollMenu(SeePollsMenu seePollsMenu, Poll poll, DatabaseManager databaseManager){
+    public SeePollMenu(@Nullable SeePollsMenu seePollsMenu, Poll poll){
         this.seePollsMenu = seePollsMenu;
         this.poll = poll;
-        this.databaseManager = databaseManager;
     }
 
     @Override
@@ -82,7 +81,9 @@ public class SeePollMenu extends Menu {
 
             if(isPollActive) {
                 optionItem = Utils.createItem(optionMaterial, "&8Option " + option.getOptionNumber() + ": &f" + option.getName() + optionPercentageS, "option-" + i,
-                        hasVoted ? playerVotedOnThisOption ? "&aYou voted on this option" : "&2You've voted on an other option!"
+                        hasVoted ?
+                                (playerVotedOnThisOption ? "&aYou voted on this option" :
+                                        (poll.getPollSettings().changeVotes ? "&2Click to change your vote" : "&2You've voted on an other option!"))
                                 : "&eClick to vote for this option!");
             }else{
                 optionItem = option.getAmountOfVotes() == winningOption.getAmountOfVotes() ? //Is a winning option
@@ -118,27 +119,23 @@ public class SeePollMenu extends Menu {
             case RED_DYE -> {
                 if(!Utils.isLocalizedNameEqual(item.getItemMeta(), "back")) return;
 
+                if(seePollsMenu == null){
+                    player.closeInventory();
+                    return;
+                }
+
                 seePollsMenu.open(player);
             }
 
             case OAK_SIGN -> {
                 if(!item.getItemMeta().getLocalizedName().startsWith("option-")) return;
-
-                if (poll.hasVoted(player)) {
-                    player.sendMessage(ChatColor.RED + "You've already voted!");
-                    return;
-                }
+                if(item.containsEnchantment(Enchantment.MENDING)) return;
 
                 byte optionNum = Byte.parseByte(item.getItemMeta().getLocalizedName().split("-")[1]);
-                Option option = poll.getAllOptions().get(optionNum);
 
-                try {
-                    option.addVote(player.getUniqueId(), poll, databaseManager);
-                    player.sendMessage(ChatColor.GREEN + "Successfully voted!");
-                    setMenuItems(player);
-                } catch (SQLException ex) {
-                    throw new RuntimeException(ex);
-                }
+                player.performCommand("vote "+poll.code+" "+ (optionNum+1));
+
+                setMenuItems(player);
 
             }
 

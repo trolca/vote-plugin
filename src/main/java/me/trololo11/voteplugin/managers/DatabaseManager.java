@@ -325,6 +325,27 @@ public class DatabaseManager {
     }
 
     /**
+     * Removes every record of player voted in the players_voted table
+     * @param poll The poll to remove the vote from
+     * @param voter The player to remove the vote data from
+     * @throws SQLException On database connection error
+     */
+    public void removeVote(Poll poll, UUID voter) throws SQLException {
+        String sql = "DELETE FROM players_voted WHERE uuid = ? AND poll_code = ?";
+
+        Connection connection = getConnection();
+        PreparedStatement statement = connection.prepareStatement(sql);
+
+        statement.setString(1, voter.toString());
+        statement.setString(2, poll.code);
+
+        statement.executeUpdate();
+
+        statement.close();
+        connection.close();
+    }
+
+    /**
      * Gets all the players that already saw the specified poll
      * (Aka the poll was printed for them on chat).
      * @param poll The poll to check who saw

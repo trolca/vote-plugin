@@ -3,14 +3,17 @@ package me.trololo11.voteplugin.commands;
 import me.trololo11.voteplugin.VotePlugin;
 import me.trololo11.voteplugin.managers.DatabaseManager;
 import me.trololo11.voteplugin.managers.PollsManager;
+import me.trololo11.voteplugin.utils.Option;
 import me.trololo11.voteplugin.utils.Poll;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class VoteCommand implements CommandExecutor {
 
@@ -24,7 +27,7 @@ public class VoteCommand implements CommandExecutor {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
 
         if(!(sender instanceof Player)) return true;
 
@@ -66,14 +69,28 @@ public class VoteCommand implements CommandExecutor {
             return true;
         }
 
-        if(poll.hasVoted(player)){
+        Option alreadyVotedOption = poll.getOptionPlayerVoted(player);
+        Option votingOption = poll.getAllOptions().get(optionNum-1);
+
+        if(poll.hasVoted(player) && !poll.getPollSettings().changeVotes){
             player.sendMessage(ChatColor.RED + "You've already voted for this poll!");
+            return true;
+
+        }else if(poll.getPollSettings().changeVotes && alreadyVotedOption != null && votingOption.getOptionNumber() != alreadyVotedOption.getOptionNumber()){
+            try {
+                alreadyVotedOption.removeVote(player.getUniqueId(), poll, databaseManager);
+            } catch (SQLException e) {
+                plugin.logger.severe("Error while removing vote for poll "+ code + " and option "+ alreadyVotedOption.getOptionNumber());
+                e.printStackTrace(System.out);
+            }
+
+        }else if(alreadyVotedOption != null && votingOption.getOptionNumber() == alreadyVotedOption.getOptionNumber()){
             return true;
         }
 
         //Adds the vote
         try {
-            poll.getAllOptions().get(optionNum-1).addVote(player.getUniqueId(), poll, databaseManager   );
+            votingOption.addVote(player.getUniqueId(), poll, databaseManager);
         } catch (SQLException e) {
             plugin.logger.severe("Error while voting for the poll "+ code);
             e.printStackTrace(System.out);

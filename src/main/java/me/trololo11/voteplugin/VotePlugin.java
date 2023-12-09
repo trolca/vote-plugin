@@ -1,9 +1,7 @@
 package me.trololo11.voteplugin;
 
-import me.trololo11.voteplugin.commands.CreatePollCommand;
-import me.trololo11.voteplugin.commands.SeePollsCommand;
-import me.trololo11.voteplugin.commands.TestCommand;
-import me.trololo11.voteplugin.commands.VoteCommand;
+import me.trololo11.voteplugin.commands.*;
+import me.trololo11.voteplugin.commands.tabcompleters.SeePollTabCompleter;
 import me.trololo11.voteplugin.commands.tabcompleters.VoteTabCompleter;
 import me.trololo11.voteplugin.listeners.CheckPlayerSeenPolls;
 import me.trololo11.voteplugin.listeners.MenusManager;
@@ -59,9 +57,11 @@ public final class VotePlugin extends JavaPlugin {
         getCommand("testcommand").setExecutor(new TestCommand(pollsManager));
         getCommand("vote").setExecutor(new VoteCommand(pollsManager, databaseManager));
         getCommand("createpoll").setExecutor(new CreatePollCommand(pollsManager));
-        getCommand("seepolls").setExecutor(new SeePollsCommand(pollsManager, databaseManager));
+        getCommand("seepolls").setExecutor(new SeePollsCommand(pollsManager));
+        getCommand("seepoll").setExecutor(new SeePollCommand(pollsManager));
 
         getCommand("vote").setTabCompleter(new VoteTabCompleter());
+        getCommand("seepoll").setTabCompleter(new SeePollTabCompleter());
 
     }
 

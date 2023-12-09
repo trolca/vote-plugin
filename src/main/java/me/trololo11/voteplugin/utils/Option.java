@@ -1,5 +1,6 @@
 package me.trololo11.voteplugin.utils;
 
+import com.google.errorprone.annotations.RestrictedApi;
 import me.trololo11.voteplugin.managers.DatabaseManager;
 
 import java.sql.SQLException;
@@ -33,6 +34,7 @@ public class Option {
      * Gets the name of this option
      * @return The name of this option
      */
+
     public String getName() {
         return name;
     }
@@ -58,6 +60,17 @@ public class Option {
     public void addVote(UUID voter,Poll poll, DatabaseManager databaseManager) throws SQLException {
         playersVoted.add(voter);
         databaseManager.addVote(this, poll, voter);
+    }
+
+
+    public void removeVote(UUID uuid,Poll poll, DatabaseManager databaseManager) throws SQLException {
+        playersVoted.remove(uuid);
+        databaseManager.removeVote(poll, uuid);
+
+    }
+
+    public boolean hasVoted(UUID uuid){
+        return playersVoted.contains(uuid);
     }
 
     public int getAmountOfVotes(){

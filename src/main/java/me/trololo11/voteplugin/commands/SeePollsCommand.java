@@ -11,11 +11,9 @@ import org.bukkit.entity.Player;
 public class SeePollsCommand implements CommandExecutor {
 
     private PollsManager pollsManager;
-    private DatabaseManager databaseManager;
 
-    public SeePollsCommand(PollsManager pollsManager, DatabaseManager databaseManager){
+    public SeePollsCommand(PollsManager pollsManager){
         this.pollsManager = pollsManager;
-        this.databaseManager = databaseManager;
     }
 
     @Override
@@ -25,7 +23,7 @@ public class SeePollsCommand implements CommandExecutor {
 
         Player player = (Player) sender;
 
-        new SeePollsMenu(SeePollsMenu.PollType.ACTIVE, pollsManager, databaseManager).open(player);
+        new SeePollsMenu(SeePollsMenu.PollType.ACTIVE, pollsManager).open(player);
 
         return true;
     }

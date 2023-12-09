@@ -11,3 +11,6 @@ commands:
     description: "Creates a poll"
   seepolls:
     description: "See all polls"
+  seepoll:
+    description: "See a specific poll"
+    usage: "/seepoll <poll code>"

@@ -4,6 +4,7 @@ import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
+import javax.annotation.Nullable;
 import java.util.*;
 
 /**
@@ -38,7 +39,7 @@ public class Poll {
     public Poll(String code, OfflinePlayer creator, LinkedList<Option> options, String title, Material icon, Date endDate, PollSettings pollSettings, boolean isActive) {
 
         if(code.length() != 6){
-            throw new IllegalArgumentException("The code of every vote should be 6 characters long!");
+            throw new IllegalArgumentException("The code of every vote has to be 6 characters long!");
         }
 
         if(options.size() < 2){
@@ -88,6 +89,22 @@ public class Poll {
         }
 
         return false;
+
+    }
+
+    /**
+     * Gets the {@link Option} that the provided player voted on already.
+     * @param player The player to get
+     * @return An {@link Option} that player voted for. If player hasn't voted on anything then returns null
+     */
+    @Nullable
+    public Option getOptionPlayerVoted(Player player){
+
+        for(Option option : getAllOptions()){
+            if (option.hasVoted(player.getUniqueId())) return option;
+         }
+
+        return null;
 
     }
 

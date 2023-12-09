@@ -23,13 +23,11 @@ public class SeePollsMenu extends Menu {
 
     private PollsManager pollsManager;
     private PollType pollType;
-    private DatabaseManager databaseManager;
     private int page;
 
-    public SeePollsMenu(PollType pollType, PollsManager pollsManager, DatabaseManager databaseManager){
+    public SeePollsMenu(PollType pollType, PollsManager pollsManager){
         this.pollType = pollType;
         this.pollsManager = pollsManager;
-        this.databaseManager = databaseManager;
         this.page = 1;
     }
 
@@ -160,7 +158,7 @@ public class SeePollsMenu extends Menu {
                 }
             }
 
-            new SeePollMenu(this, poll, databaseManager).open(player);
+            new SeePollMenu(this, poll).open(player);
         }
 
         switch (item.getType()){

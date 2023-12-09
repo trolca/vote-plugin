@@ -35,7 +35,7 @@ public class CheckPlayerSeenPolls implements Listener {
         for(Poll poll : pollsManager.getAllPolls()){
             List<UUID> playersSeen = pollsManager.getAllPlayerSawPoll(poll);
 
-            if(!playersSeen.contains(player.getUniqueId())){
+            if(poll.getPollSettings().showOnJoin && !playersSeen.contains(player.getUniqueId())){
                 unseenPolls.add(poll);
             }
 

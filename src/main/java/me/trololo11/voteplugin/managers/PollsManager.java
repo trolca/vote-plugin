@@ -3,6 +3,7 @@ package me.trololo11.voteplugin.managers;
 import me.trololo11.voteplugin.VotePlugin;
 import me.trololo11.voteplugin.tasks.ChangeHistoricPoll;
 import me.trololo11.voteplugin.tasks.PollStopTask;
+import me.trololo11.voteplugin.tasks.RemindToVoteTask;
 import me.trololo11.voteplugin.utils.Poll;
 import me.trololo11.voteplugin.utils.Utils;
 import org.bukkit.Bukkit;
@@ -38,14 +39,18 @@ public class PollsManager {
 
         allPolls.forEach(poll -> {
 
-            if(!poll.getEndDate().before(todayDate)){
+            long timeDifference = todayDate.getTime() - poll.getEndDate().getTime();
+
+            if(poll.getEndDate().getTime() > todayDate.getTime()){
                 activePolls.put(poll.code, poll);
                 createStopTask(poll);
-            }else if(todayDate.getTime() - poll.getEndDate().getTime() < 604800000L && !poll.isActive){
+            }else if(timeDifference < 604800000L && !poll.isActive){
                 historicPolls.add(poll);
-            }else if(todayDate.getTime() - poll.getEndDate().getTime() < 604800000L && poll.isActive){
+            }else if(timeDifference < 604800000L){
                 try {
+                    System.out.println("was active but not now >:)");
                     databaseManager.removeEveryPlayerSeenPoll(poll);
+                    historicPolls.add(poll);
                     poll.isActive = false;
                     pollsToUpdate.add(poll);
                 } catch (SQLException e) {
@@ -64,6 +69,7 @@ public class PollsManager {
             }
 
             allCodes.add(poll.code);
+
 
         });
 
@@ -110,8 +116,12 @@ public class PollsManager {
 
         Date endDate = poll.getEndDate();
         long timeBetween = endDate.getTime() - new Date().getTime();
+        long delay = (timeBetween/1000)*20;
 
-        new PollStopTask(this, poll).runTaskLater(plugin, (timeBetween/1000)*20 );
+        new PollStopTask(this, poll).runTaskLater(plugin, delay);
+
+        if(poll.getPollSettings().remindVote && delay > 72000L)
+            new RemindToVoteTask(poll).runTaskLater(plugin, delay-72000L);
     }
 
     /**
@@ -123,6 +133,7 @@ public class PollsManager {
     public void stopPoll(Poll poll) throws SQLException {
         poll.isActive = false;
         activePolls.remove(poll.code);
+        pollsToUpdate.add(poll);
         recentlyFinishedPolls.add(poll);
 
         new ChangeHistoricPoll(this, poll).runTaskLater(plugin, 72000L);
