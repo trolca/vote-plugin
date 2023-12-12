@@ -18,7 +18,7 @@ import java.util.*;
  * add them.
  */
 public class PollsManager {
-    private HashMap<String, Poll> activePolls = new HashMap<>();
+    private LinkedHashMap<String, Poll> activePolls = new LinkedHashMap<>();
     private HashMap<String, Poll> allPolls = new HashMap<>();
     private HashMap<Poll, ArrayList<UUID> > playersPollsSeenHashMap = new HashMap<>();
     private DatabaseManager databaseManager;
@@ -48,7 +48,6 @@ public class PollsManager {
                 historicPolls.add(poll);
             }else if(timeDifference < 604800000L){
                 try {
-                    System.out.println("was active but not now >:)");
                     databaseManager.removeEveryPlayerSeenPoll(poll);
                     historicPolls.add(poll);
                     poll.isActive = false;

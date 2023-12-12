@@ -41,13 +41,19 @@ public class PollSettingsMenu extends Menu {
         ItemStack filler = Utils.createItem(Material.WHITE_STAINED_GLASS_PANE, " ", "filler");
         ItemStack back = Utils.createItem(Material.RED_DYE, "&c&lBack", "back");
         ItemStack showVotesOption = Utils.createItem(pollSettings.showVotes ? SETTING_ON : SETTING_OFF,
-                ( pollSettings.showVotes ? COLOR_ON : COLOR_OFF) + "Show votes", "show-votes");
+                ( pollSettings.showVotes ? COLOR_ON : COLOR_OFF) + "Show votes", "show-votes", "&7If turned on it's gonna show the percentage amount",
+                "&7of how many people voted on each option,",
+                "&7and the total amount of votes",
+                "&8&o(If turned off the percentage amount", "&8&ois still gonna show when a poll finishes)");
+
         ItemStack showOnJoinOption = Utils.createItem(pollSettings.showOnJoin ? SETTING_ON : SETTING_OFF,
-                ( pollSettings.showOnJoin ? COLOR_ON : COLOR_OFF) + "Show on join", "show-join");
+                ( pollSettings.showOnJoin ? COLOR_ON : COLOR_OFF) + "Show on join", "show-join", "&7If turned on it's gonna show this poll to players",
+                "&7on join if they haven't seen it yet.");
         ItemStack changeVotesOption = Utils.createItem(pollSettings.changeVotes ? SETTING_ON : SETTING_OFF,
-                ( pollSettings.changeVotes ? COLOR_ON : COLOR_OFF) + "Player can change vote", "change-vote");
+                ( pollSettings.changeVotes ? COLOR_ON : COLOR_OFF) + "Player can change vote", "change-vote", "&7If turned on players can change their vote to other one");
         ItemStack remindVote = Utils.createItem(pollSettings.remindVote ? SETTING_ON : SETTING_OFF,
-                ( pollSettings.remindVote ? COLOR_ON : COLOR_OFF) + "Remind to vote", "remind-vote");
+                ( pollSettings.remindVote ? COLOR_ON : COLOR_OFF) + "Remind to vote", "remind-vote", "&7If turned on it's gonna remind all of the online players",
+                "&7that haven't voted yet to vote for this poll an hour", "&7Before it finishes.");
 
         for(int i=0; i < 9; i++){
             inventory.setItem(i, darkFiller);

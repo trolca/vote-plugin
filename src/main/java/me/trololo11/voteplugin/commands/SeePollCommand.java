@@ -37,7 +37,7 @@ public class SeePollCommand implements CommandExecutor {
             return true;
         }
 
-        new SeePollMenu(null, poll).open(player);
+        new SeePollMenu(null,pollsManager, poll).open(player);
 
         return true;
     }

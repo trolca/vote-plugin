@@ -10,6 +10,7 @@ import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -46,7 +47,7 @@ public class Utils {
 
             TextComponent optionText = new TextComponent(ChatColor.GRAY.toString() + (i+1) + " - "+ChatColor.RESET+ Utils.chat(option.getName()));
             optionText.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/vote "+poll.code + " " + (i+1) ));
-            optionText.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("Click to vote!")));
+            optionText.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("Click to vote! ")));
 
             player.spigot().sendMessage(optionText);
         }
@@ -220,6 +221,70 @@ public class Utils {
         if(seconds > 0 && charInArray(timeRange, 's')) stringBuilder.append(seconds).append("s");
 
         return stringBuilder.toString();
+
+    }
+
+    /**
+     * Shows the all the polls from the array in an inventory. Is used to format the {@link me.trololo11.voteplugin.menus.SeePlayerPollsMenu}
+     * and {@link me.trololo11.voteplugin.menus.SeePollsMenu}. This function mostly exists to have this code in one place
+     * for every menu that will need to show polls in a page menu
+     * @param polls A list of polls to show
+     * @param page The page that the menu is on.
+     * @param inventory The inventory to set the items in
+     * @param player The player that is opening the inventory
+     * @param pollsManager A polls manager object to see if players saw a poll or not
+     */
+    public static void generatePollsFromListInInv(List<Poll> polls, int page, Inventory inventory, Player player, PollsManager pollsManager){
+
+        for(int i=0; i < 27; i++){
+
+            int index = i+( (page-1)*27 );
+
+            if(index >= polls.size()) break;
+
+            ArrayList<String> lore = new ArrayList<>(10);
+            Poll poll = polls.get( index );
+            long allVotes = (!poll.isActive || poll.getPollSettings().showVotes) ? poll.getTotalVotes() : 0;
+            boolean playerSawPoll = pollsManager.playerSawPoll(player.getUniqueId(), poll);
+            ItemStack pollItem = new ItemStack(poll.getIcon());
+
+            ItemMeta pollMeta = pollItem.getItemMeta();
+            pollMeta.setDisplayName(ChatColor.RESET + Utils.chat(poll.getTitle() + "&6&l" + ( playerSawPoll ? "" : poll.isActive ? " NEW" : " FINISHED" )));
+
+            lore.add(ChatColor.GREEN + "Poll creator: "+poll.creator.getName());
+            lore.add("");
+            lore.add(ChatColor.GOLD + ChatColor.BOLD.toString() + "Options:");
+            for(Option option : poll.getAllOptions()){
+
+                String optionPercentageS = "";
+                if(!poll.isActive || poll.getPollSettings().showVotes){
+                    int optionVotes = option.getAmountOfVotes();
+                    optionPercentageS = ChatColor.GRAY + " ("+((int) ( (double) optionVotes/allVotes )*100) + "%)";
+                }
+                boolean hasVoted = option.getPlayersVoted().contains(player.getUniqueId());
+                String optionName = Utils.chat(option.getName());
+
+                lore.add(ChatColor.GRAY.toString() + option.getOptionNumber() + ChatColor.WHITE +" - " + (hasVoted ?
+                        ChatColor.GREEN + ChatColor.stripColor(optionName) + " (voted on)" : optionName) + optionPercentageS);
+
+            }
+            if(!poll.isActive || poll.getPollSettings().showVotes)
+                lore.add(ChatColor.DARK_GRAY + "Total votes: "+ allVotes);
+            lore.add(ChatColor.YELLOW + "Ends in: " + poll.getEndDateString());
+            lore.add("");
+            lore.add(ChatColor.DARK_GRAY + "Poll code: "+ poll.code);
+
+            pollMeta.setLore(lore);
+            pollMeta.setLocalizedName("poll-"+poll.code);
+            pollMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_DESTROYS);
+            if(!playerSawPoll)
+                pollMeta.addEnchant(Enchantment.MENDING, 1, true);
+
+            pollItem.setItemMeta(pollMeta);
+
+            inventory.setItem(i+9, pollItem);
+
+        }
 
     }
 

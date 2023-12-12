@@ -8,6 +8,7 @@ import me.trololo11.voteplugin.utils.Poll;
 import me.trololo11.voteplugin.utils.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -19,12 +20,19 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Shows all the polls if a specified filter presented by {@link PollType}
+ */
 public class SeePollsMenu extends Menu {
 
     private PollsManager pollsManager;
     private PollType pollType;
     private int page;
 
+    /**
+     * @param pollType The filter of the polls to show (The types of polls that is going to show)
+     * @param pollsManager A poll manager object
+     */
     public SeePollsMenu(PollType pollType, PollsManager pollsManager){
         this.pollType = pollType;
         this.pollsManager = pollsManager;
@@ -76,56 +84,7 @@ public class SeePollsMenu extends Menu {
         }
 
 
-
-        for(int i=0; i < 27; i++){
-
-            int index = i+( (page-1)*27 );
-
-            if(index >= polls.size()) break;
-
-            ArrayList<String> lore = new ArrayList<>(10);
-            Poll poll = polls.get( index );
-            long allVotes = poll.getTotalVotes();
-            boolean playerSawPoll = pollsManager.playerSawPoll(player.getUniqueId(), poll);
-            ItemStack pollItem = new ItemStack(poll.getIcon());
-
-            ItemMeta pollMeta = pollItem.getItemMeta();
-            pollMeta.setDisplayName(ChatColor.RESET + Utils.chat(poll.getTitle() + "&6&l" + ( playerSawPoll ? "" : poll.isActive ? " NEW" : " FINISHED" )));
-
-            lore.add(ChatColor.GREEN + "Poll creator: "+poll.creator.getName());
-            lore.add("");
-            lore.add(ChatColor.GOLD + ChatColor.BOLD.toString() + "Options:");
-            for(Option option : poll.getAllOptions()){
-
-                String optionPercentageS = "";
-                if(!poll.isActive || poll.getPollSettings().showVotes){
-                    int optionVotes = option.getAmountOfVotes();
-                    optionPercentageS = ChatColor.GRAY + " ("+((int) ( (double) optionVotes/allVotes )*100) + "%)";
-                }
-                boolean hasVoted = option.getPlayersVoted().contains(player.getUniqueId());
-                String optionName = Utils.chat(option.getName());
-
-                lore.add(ChatColor.GRAY.toString() + option.getOptionNumber() + ChatColor.WHITE +" - " + (hasVoted ?
-                        ChatColor.GREEN + ChatColor.stripColor(optionName) + " (voted on)" : optionName) + optionPercentageS);
-
-            }
-            if(!poll.isActive || poll.getPollSettings().showVotes)
-                lore.add(ChatColor.DARK_GRAY + "Total votes: "+ allVotes);
-            lore.add(ChatColor.YELLOW + "Ends in: " + poll.getEndDateString());
-            lore.add("");
-            lore.add(ChatColor.DARK_GRAY + "Poll code: "+ poll.code);
-
-            pollMeta.setLore(lore);
-            pollMeta.setLocalizedName("poll-"+poll.code);
-            pollMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_DESTROYS);
-            if(!playerSawPoll)
-                pollMeta.addEnchant(Enchantment.MENDING, 1, true);
-
-            pollItem.setItemMeta(pollMeta);
-
-            inventory.setItem(i+9, pollItem);
-
-        }
+        Utils.generatePollsFromListInInv(polls, page, inventory, player, pollsManager);
 
         inventory.setItem(0, back);
         inventory.setItem(5, activePolls);
@@ -158,7 +117,7 @@ public class SeePollsMenu extends Menu {
                 }
             }
 
-            new SeePollMenu(this, poll).open(player);
+            new SeePollMenu(this,pollsManager, poll).open(player);
         }
 
         switch (item.getType()){

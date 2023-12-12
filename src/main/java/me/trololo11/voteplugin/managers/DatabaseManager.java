@@ -167,7 +167,7 @@ public class DatabaseManager {
      * @throws SQLException On database error
      */
     public ArrayList<Poll> getAllPolls() throws SQLException {
-        String sql = "SELECT * FROM polls";
+        String sql = "SELECT * FROM polls ORDER BY end_date DESC";
 
         Connection connection = getConnection();
         PreparedStatement getPollsStatement = connection.prepareStatement(sql);

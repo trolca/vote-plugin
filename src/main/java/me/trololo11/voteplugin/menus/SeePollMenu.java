@@ -1,6 +1,6 @@
 package me.trololo11.voteplugin.menus;
 
-import me.trololo11.voteplugin.managers.DatabaseManager;
+import me.trololo11.voteplugin.managers.PollsManager;
 import me.trololo11.voteplugin.utils.Menu;
 import me.trololo11.voteplugin.utils.Option;
 import me.trololo11.voteplugin.utils.Poll;
@@ -13,16 +13,25 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nullable;
-import java.sql.SQLException;
 import java.util.List;
 
+/**
+ * This menu shows a gui version of a {@link Poll}
+ */
 public class SeePollMenu extends Menu {
 
-    private SeePollsMenu seePollsMenu;
+    private Menu menuBack;
+    private PollsManager pollsManager;
     private Poll poll;
 
-    public SeePollMenu(@Nullable SeePollsMenu seePollsMenu, Poll poll){
-        this.seePollsMenu = seePollsMenu;
+    /**
+     * @param menuBack The menu that will open after clicking the back button (If null it's going to close the inventory)
+     * @param pollsManager A poll manager object
+     * @param poll The poll that the gui will show
+     */
+    public SeePollMenu(@Nullable Menu menuBack,PollsManager pollsManager, Poll poll){
+        this.menuBack = menuBack;
+        this.pollsManager = pollsManager;
         this.poll = poll;
     }
 
@@ -119,12 +128,12 @@ public class SeePollMenu extends Menu {
             case RED_DYE -> {
                 if(!Utils.isLocalizedNameEqual(item.getItemMeta(), "back")) return;
 
-                if(seePollsMenu == null){
+                if(menuBack == null){
                     player.closeInventory();
                     return;
                 }
 
-                seePollsMenu.open(player);
+                menuBack.open(player);
             }
 
             case OAK_SIGN -> {
@@ -136,6 +145,16 @@ public class SeePollMenu extends Menu {
                 player.performCommand("vote "+poll.code+" "+ (optionNum+1));
 
                 setMenuItems(player);
+
+            }
+
+            case PLAYER_HEAD -> {
+                if(!Utils.isLocalizedNameEqual(item.getItemMeta(), "poll-creator")) return;
+
+                if(menuBack instanceof SeePlayerPollsMenu)
+                    return;
+
+                new SeePlayerPollsMenu(pollsManager, poll.creator, this).open(player);
 
             }
 
