@@ -14,3 +14,8 @@ commands:
   seepoll:
     description: "See a specific poll"
     usage: "/seepoll <poll code>"
+permissions:
+  voteplugin.createpolls:
+    description: "Players with this permission can create polls"
+  voteplugin.deletepolls:
+    description: "Players with this permission can delete other player's polls"

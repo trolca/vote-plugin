@@ -111,9 +111,11 @@ public class SeePollMenu extends Menu {
         }
 
         if(player.getUniqueId().equals(poll.creator.getUniqueId()) && poll.isActive){
-
             inventory.setItem(6, Utils.createItem(Material.ORANGE_DYE, "&6&lClick here to edit poll", "edit-poll"));
+        }
 
+        if( (player.getUniqueId().equals(poll.creator.getUniqueId()) || player.hasPermission("voteplugin.deletepolls")) && poll.isActive ){
+            inventory.setItem(2, Utils.createItem(Material.BARRIER, "&4&lDelete this poll", "delete-poll"));
         }
 
         inventory.setItem(0, back);
@@ -171,6 +173,15 @@ public class SeePollMenu extends Menu {
                     return;
 
                 new SeePlayerPollsMenu(pollsManager, poll.creator, this).open(player);
+
+            }
+
+            case BARRIER -> {
+                if(!Utils.isLocalizedNameEqual(item.getItemMeta(), "delete-poll")) return;
+                if(!player.getUniqueId().equals(poll.creator.getUniqueId()) && !player.hasPermission("voteplugin.deletepolls")) return;
+                if(!poll.isActive) return;
+
+                new PollDeleteConfirmMenu(menuBack,this, pollsManager, poll).open(player);
 
             }
 

@@ -259,5 +259,25 @@ public class PollsManager {
         return Collections.unmodifiableList(recentlyFinishedPolls);
     }
 
+    /**
+     * Removes a poll from all the arrays in this manager and from the database.
+     * @param poll The poll to remove
+     * @throws SQLException On database connection error
+     */
+    public void removePoll(Poll poll) throws SQLException {
+        if(!poll.isActive)
+            throw new IllegalArgumentException("You cannot delete a non active poll!");
+
+        allPolls.remove(poll.code);
+        activePolls.remove(poll.code);
+        allCodes.remove(poll.code);
+        playersPollsSeenHashMap.remove(poll);
+        pollsToUpdate.remove(poll);
+        allPollsList.remove(poll);
+
+        databaseManager.removePoll(poll);
+
+    }
+
 
 }

@@ -470,26 +470,42 @@ public class DatabaseManager {
 
     }
 
-    public byte optionNumFromName(String name, Poll poll) throws SQLException {
+    /**
+     * Removes the specified poll from the database and everything connected to it in the database.
+     * @param poll The poll to remove
+     * @throws SQLException On database connection error
+     */
+    public void removePoll(Poll poll) throws SQLException {
         Connection connection = getConnection();
 
-        PreparedStatement statement = connection.prepareStatement("SELECT option_num FROM polls_options WHERE code = ? AND name = ?");
+        PreparedStatement removePlayersSeenPollStatement = connection.prepareStatement("DELETE FROM players_seen_poll WHERE poll_code = ?");
+        PreparedStatement removePlayersVotedStatement = connection.prepareStatement("DELETE FROM players_voted WHERE poll_code = ?");
+        PreparedStatement removePollOptionsStatement = connection.prepareStatement("DELETE FROM polls_options WHERE code = ?");
+        PreparedStatement removePollSettingsStatement = connection.prepareStatement("DELETE FROM poll_settings WHERE poll_code = ?");
+        PreparedStatement removePollStatement = connection.prepareStatement("DELETE FROM polls WHERE code = ?");
 
-        statement.setString(1, poll.code);
-        statement.setString(2, name);
+        String pollCode = poll.code;
 
-        ResultSet results = statement.executeQuery();
+        removePlayersSeenPollStatement.setString(1, pollCode);
+        removePollOptionsStatement.setString(1, pollCode);
+        removePlayersVotedStatement.setString(1, pollCode);
+        removePollSettingsStatement.setString(1, pollCode);
+        removePollStatement.setString(1, pollCode);
 
-        byte num = -1;
 
-        if(results.next())
-            num = results.getByte("option_num");
+        removePlayersSeenPollStatement.executeUpdate();
+        removePlayersVotedStatement.executeUpdate();
+        removePollOptionsStatement.executeUpdate();
+        removePollSettingsStatement.executeUpdate();
+        removePollStatement.executeUpdate();
 
-        statement.close();
+        removePlayersSeenPollStatement.close();
+        removePlayersVotedStatement.close();
+        removePollOptionsStatement.close();
+        removePollSettingsStatement.close();
+        removePollStatement.close();
+
         connection.close();
-
-        return num;
-
     }
 
 

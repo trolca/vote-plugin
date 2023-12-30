@@ -3,6 +3,7 @@ package me.trololo11.voteplugin.commands;
 import me.trololo11.voteplugin.managers.DatabaseManager;
 import me.trololo11.voteplugin.managers.PollsManager;
 import me.trololo11.voteplugin.menus.PollCreateMenu;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -24,6 +25,11 @@ public class CreatePollCommand implements CommandExecutor {
         if(!(sender instanceof Player)) return true;
 
         Player player = (Player) sender;
+
+        if(!player.hasPermission("voteplugin.createpolls")){
+            player.sendMessage(ChatColor.RED + "You don't have the permission to use this command!");
+            return true;
+        }
 
         new PollCreateMenu(pollsManager, databaseManager).open(player);
 
