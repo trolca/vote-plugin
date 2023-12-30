@@ -2,6 +2,8 @@ package me.trololo11.voteplugin.utils;
 
 import com.google.errorprone.annotations.RestrictedApi;
 import me.trololo11.voteplugin.managers.DatabaseManager;
+import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.sql.SQLException;
 import java.util.*;
@@ -79,6 +81,11 @@ public class Option {
 
     public byte getOptionNumber() {
         return optionNumber;
+    }
+
+    @ApiStatus.Internal
+    public void setOptionNumber(byte number){
+        this.optionNumber = number;
     }
 
 

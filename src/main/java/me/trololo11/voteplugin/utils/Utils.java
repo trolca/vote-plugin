@@ -288,6 +288,16 @@ public class Utils {
 
     }
 
+    public static long convertTimeToMills(int days, int hours, int minutes){
+        long time = 0;
+
+        time += days*86400000L; //Converts days to milliseconds
+        time += hours*3600000L; //Converts hours to milliseconds
+        time += minutes*60000L; //Converts minutes to milliseconds
+
+        return time;
+    }
+
     public static boolean isLocalizedNameEqual(ItemMeta itemMeta, String string){
         return itemMeta.getLocalizedName().equalsIgnoreCase(string);
     }

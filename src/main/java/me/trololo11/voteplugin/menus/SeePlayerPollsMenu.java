@@ -1,5 +1,6 @@
 package me.trololo11.voteplugin.menus;
 
+import me.trololo11.voteplugin.managers.DatabaseManager;
 import me.trololo11.voteplugin.managers.PollsManager;
 import me.trololo11.voteplugin.utils.Menu;
 import me.trololo11.voteplugin.utils.Poll;
@@ -50,7 +51,7 @@ public class SeePlayerPollsMenu extends Menu {
 
     @Override
     public void setMenuItems(Player player) {
-        List<Poll> polls = pollsManager.getAllPolls().stream().filter(poll -> poll.creator.getUniqueId() == player.getUniqueId()).toList();
+        List<Poll> polls = pollsManager.getAllPolls().stream().filter(poll -> poll.creator.getUniqueId().equals(player.getUniqueId())).toList();
         int maxPages = (int) Math.ceil(polls.size()/27.0);
         ItemStack filler = Utils.createItem(Material.GRAY_STAINED_GLASS_PANE, " ", "filler");
         ItemStack back = Utils.createItem(Material.RED_DYE, menuBack == null ? "&c&lExit" : "&c&lBack", "back");

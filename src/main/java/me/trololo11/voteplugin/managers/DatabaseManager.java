@@ -91,9 +91,9 @@ public class DatabaseManager {
         if(!foreignCheck.next()){
             statement.execute("ALTER TABLE polls_options ADD INDEX `option_num_index` (option_num);");
             statement.execute("ALTER TABLE players_voted ADD INDEX `vote_option_index` (vote_option);");
-            statement.execute("ALTER TABLE polls_options ADD CONSTRAINT `vote_options_con` FOREIGN KEY (code) REFERENCES polls(code);");
-            statement.execute("ALTER TABLE players_voted ADD CONSTRAINT `fk_player_vote` FOREIGN KEY (vote_option) REFERENCES polls_options(option_num);");
-            statement.execute("ALTER TABLE players_voted ADD CONSTRAINT `fk_player_vote_code` FOREIGN KEY (poll_code) REFERENCES polls(code);");
+            statement.execute("ALTER TABLE polls_options ADD CONSTRAINT `vote_options_con` FOREIGN KEY (code) REFERENCES polls(code) ON UPDATE CASCADE;");
+            statement.execute("ALTER TABLE players_voted ADD CONSTRAINT `fk_player_vote` FOREIGN KEY (vote_option) REFERENCES polls_options(option_num) ON UPDATE CASCADE;");
+            statement.execute("ALTER TABLE players_voted ADD CONSTRAINT `fk_player_vote_code` FOREIGN KEY (poll_code) REFERENCES polls(code) ON UPDATE CASCADE;");
             statement.execute("INSERT INTO has_created_keys VALUES(true)");
         }
 
@@ -251,7 +251,8 @@ public class DatabaseManager {
                     icon,
                     endDate,
                     pollSettings,
-                    isActive);
+                    isActive,
+                    this);
 
             allPolls.add(poll);
 
@@ -444,8 +445,52 @@ public class DatabaseManager {
         connection.close();
     }
 
+    /**
+     * Changes the number of an option in the database to a different one
+     * @param oldNumber The old number of an option to change
+     * @param newNumber The new number of option to change to option to
+     * @param poll The poll that the option is from
+     * @throws SQLException On database connection error
+     */
+    public void changeOptionNumber(byte oldNumber, byte newNumber, Poll poll) throws SQLException {
+
+        Connection connection = getConnection();
+
+        PreparedStatement setOptionNumStatement = connection.prepareStatement("UPDATE polls_options SET option_num = ? WHERE code = ? AND option_num = ?");
+
+        setOptionNumStatement.setByte(1, newNumber);
+        setOptionNumStatement.setString(2, poll.code);
+        setOptionNumStatement.setByte(3, oldNumber);
 
 
+        setOptionNumStatement.executeUpdate();
+
+        setOptionNumStatement.close();
+        connection.close();
+
+    }
+
+    public byte optionNumFromName(String name, Poll poll) throws SQLException {
+        Connection connection = getConnection();
+
+        PreparedStatement statement = connection.prepareStatement("SELECT option_num FROM polls_options WHERE code = ? AND name = ?");
+
+        statement.setString(1, poll.code);
+        statement.setString(2, name);
+
+        ResultSet results = statement.executeQuery();
+
+        byte num = -1;
+
+        if(results.next())
+            num = results.getByte("option_num");
+
+        statement.close();
+        connection.close();
+
+        return num;
+
+    }
 
 
 }

@@ -1,5 +1,6 @@
 package me.trololo11.voteplugin.menus.pollcreatesubmenus;
 
+import me.trololo11.voteplugin.menus.EditPollMenu;
 import me.trololo11.voteplugin.menus.PollCreateMenu;
 import me.trololo11.voteplugin.utils.InputMenu;
 import me.trololo11.voteplugin.utils.Utils;
@@ -13,9 +14,14 @@ import java.util.List;
 public class IconSelectMenu extends InputMenu {
 
     private PollCreateMenu pollCreateMenu;
+    private EditPollMenu editPollMenu;
 
     public IconSelectMenu(PollCreateMenu pollCreateMenu){
         this.pollCreateMenu = pollCreateMenu;
+    }
+
+    public IconSelectMenu(EditPollMenu editPollMenu){
+        this.editPollMenu = editPollMenu;
     }
 
     @Override
@@ -32,9 +38,12 @@ public class IconSelectMenu extends InputMenu {
     protected List<AnvilGUI.ResponseAction> onQuit(Player player) {
 
         player.closeInventory();
-        player.openInventory(pollCreateMenu.getInventory());
+        if(pollCreateMenu == null)
+            editPollMenu.open(player);
+        else
+            pollCreateMenu.open(player);
 
-        return List.of(AnvilGUI.ResponseAction.openInventory(pollCreateMenu.getInventory()));
+        return List.of(AnvilGUI.ResponseAction.openInventory(pollCreateMenu == null ? editPollMenu.getInventory() : pollCreateMenu.getInventory()));
     }
 
     @Override
@@ -45,9 +54,13 @@ public class IconSelectMenu extends InputMenu {
             return List.of(AnvilGUI.ResponseAction.replaceInputText(" ") ,AnvilGUI.ResponseAction.replaceInputText("This item doesn't exists!"));
         }
 
-        pollCreateMenu.setPollIcon(newIcon);
-
-        pollCreateMenu.open(player);
+        if(pollCreateMenu == null){
+            editPollMenu.setIcon(newIcon);
+            editPollMenu.open(player);
+        }else{
+            pollCreateMenu.setPollIcon(newIcon);
+            pollCreateMenu.open(player);
+        }
 
         return List.of(AnvilGUI.ResponseAction.close());
     }

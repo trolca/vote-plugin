@@ -12,7 +12,7 @@ import org.bukkit.inventory.ItemStack;
 
 public class PollSettingsMenu extends Menu {
 
-    private PollCreateMenu pollCreateMenu;
+    private Menu pollCreateMenu;
     private PollSettings pollSettings;
 
     private final Material SETTING_ON = Material.LIME_DYE;
@@ -20,7 +20,7 @@ public class PollSettingsMenu extends Menu {
     private final ChatColor COLOR_ON = ChatColor.GREEN;
     private final ChatColor COLOR_OFF = ChatColor.RED;
 
-    public PollSettingsMenu(PollCreateMenu pollCreateMenu, PollSettings pollSettings){
+    public PollSettingsMenu(Menu pollCreateMenu, PollSettings pollSettings){
         this.pollCreateMenu = pollCreateMenu;
         this.pollSettings = pollSettings;
     }

@@ -1,5 +1,6 @@
 package me.trololo11.voteplugin.menus.pollcreatesubmenus;
 
+import me.trololo11.voteplugin.menus.EditPollMenu;
 import me.trololo11.voteplugin.menus.PollCreateMenu;
 import me.trololo11.voteplugin.utils.Menu;
 import me.trololo11.voteplugin.utils.Utils;
@@ -16,9 +17,17 @@ public class EndDateSetMenu extends Menu {
     private int minutes;
 
     private PollCreateMenu pollCreateMenu;
+    private EditPollMenu editPollMenu;
 
     public EndDateSetMenu(PollCreateMenu pollCreateMenu, int days, int hours, int minutes){
         this.pollCreateMenu = pollCreateMenu;
+        this.days = days;
+        this.hours = hours;
+        this.minutes = minutes;
+    }
+
+    public EndDateSetMenu(EditPollMenu editPollMenu, int days, int hours, int minutes){
+        this.editPollMenu = editPollMenu;
         this.days = days;
         this.hours = hours;
         this.minutes = minutes;
@@ -79,7 +88,10 @@ public class EndDateSetMenu extends Menu {
             case RED_DYE -> {
                 if(!Utils.isLocalizedNameEqual(item.getItemMeta(), "back")) return;
 
-                pollCreateMenu.open(player);
+                if(pollCreateMenu == null)
+                    editPollMenu.open(player);
+                else
+                    pollCreateMenu.open(player);
             }
 
             case NAME_TAG -> {
@@ -126,9 +138,15 @@ public class EndDateSetMenu extends Menu {
                 if(days == 0 && hours == 0 && minutes == 0)
                     return;
 
-                pollCreateMenu.setTime(days, hours, minutes);
+                //I wanted to use the same menus for the edit poll menu, so I just added the ability to have the edit menu and create poll menu
+                if(pollCreateMenu == null){
+                    editPollMenu.setTime(days, hours, minutes);
+                    editPollMenu.open(player);
+                }else{
+                    pollCreateMenu.setTime(days, hours, minutes);
+                    pollCreateMenu.open(player);
+                }
 
-                pollCreateMenu.open(player);
             }
 
 

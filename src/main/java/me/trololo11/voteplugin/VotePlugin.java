@@ -56,7 +56,7 @@ public final class VotePlugin extends JavaPlugin {
 
         getCommand("testcommand").setExecutor(new TestCommand(pollsManager));
         getCommand("vote").setExecutor(new VoteCommand(pollsManager, databaseManager));
-        getCommand("createpoll").setExecutor(new CreatePollCommand(pollsManager));
+        getCommand("createpoll").setExecutor(new CreatePollCommand(pollsManager, databaseManager));
         getCommand("seepolls").setExecutor(new SeePollsCommand(pollsManager));
         getCommand("seepoll").setExecutor(new SeePollCommand(pollsManager));
 

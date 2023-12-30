@@ -3,7 +3,7 @@ package me.trololo11.voteplugin.utils;
 /**
  * This class contains all  the settings of a poll
  */
-public class PollSettings {
+public class PollSettings implements Cloneable {
 
     /**
      * If show amount of votes when the poll isn't finished
@@ -27,5 +27,14 @@ public class PollSettings {
         this.showOnJoin = showOnJoin;
         this.changeVotes = changeVotes;
         this.remindVote = remindVote;
+    }
+    
+    public PollSettings clone(){
+        try {
+            return (PollSettings) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 }

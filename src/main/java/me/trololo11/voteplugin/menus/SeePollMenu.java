@@ -110,6 +110,12 @@ public class SeePollMenu extends Menu {
             inventory.setItem(slot, optionItem);
         }
 
+        if(player.getUniqueId().equals(poll.creator.getUniqueId()) && poll.isActive){
+
+            inventory.setItem(6, Utils.createItem(Material.ORANGE_DYE, "&6&lClick here to edit poll", "edit-poll"));
+
+        }
+
         inventory.setItem(0, back);
         inventory.setItem(4, pollIcon);
         inventory.setItem(8, playerIcon);
@@ -122,6 +128,8 @@ public class SeePollMenu extends Menu {
     public void handleMenu(InventoryClickEvent e) {
         ItemStack item = e.getCurrentItem();
         Player player = (Player) e.getWhoClicked();
+
+        assert item != null;
 
         switch (item.getType()){
 
@@ -146,6 +154,14 @@ public class SeePollMenu extends Menu {
 
                 setMenuItems(player);
 
+            }
+
+            case ORANGE_DYE -> {
+                if(!Utils.isLocalizedNameEqual(item.getItemMeta(), "edit-poll")) return;
+                if(!player.getUniqueId().equals(poll.creator.getUniqueId())) return;
+                if(!poll.isActive) return;
+
+                new EditPollMenu(this, poll, pollsManager).open(player);
             }
 
             case PLAYER_HEAD -> {

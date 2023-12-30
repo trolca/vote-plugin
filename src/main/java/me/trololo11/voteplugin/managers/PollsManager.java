@@ -202,6 +202,15 @@ public class PollsManager {
     }
 
     /**
+     * Adds a poll to the poll to update list. This means that the poll is going to be updated
+     * in the sql database when the plugin disables.
+     * @param poll The poll to add
+     */
+    public void addPollToBeUpdated(Poll poll){
+        pollsToUpdate.add(poll);
+    }
+
+    /**
      * Gets all the historic polls (That have been already finished)
      * @return An <b>unmodifiable</b> list of all the finished polls
      */
@@ -249,5 +258,6 @@ public class PollsManager {
     public List<Poll> getRecentlyFinishedPolls(){
         return Collections.unmodifiableList(recentlyFinishedPolls);
     }
+
 
 }

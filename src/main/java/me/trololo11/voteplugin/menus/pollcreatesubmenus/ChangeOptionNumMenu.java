@@ -94,6 +94,7 @@ public class ChangeOptionNumMenu extends Menu {
                 options.set(startNumber, optionHolder);
 
                 optionEditMenu.setOptionNumber((byte)  num);
+
                 optionEditMenu.open(player);
             }
 

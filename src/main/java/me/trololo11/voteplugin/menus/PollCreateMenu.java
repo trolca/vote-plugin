@@ -1,6 +1,7 @@
 package me.trololo11.voteplugin.menus;
 
 import me.trololo11.voteplugin.events.PollCreateEvent;
+import me.trololo11.voteplugin.managers.DatabaseManager;
 import me.trololo11.voteplugin.managers.PollsManager;
 import me.trololo11.voteplugin.menus.pollcreatesubmenus.*;
 import me.trololo11.voteplugin.utils.*;
@@ -27,12 +28,14 @@ public class PollCreateMenu extends Menu {
     private LinkedList<String> options = new LinkedList<>();
     private PollSettings pollSettings;
     private PollsManager pollsManager;
+    private DatabaseManager databaseManager;
     private int days, hours, minutes;
 
-    public PollCreateMenu(PollsManager pollsManager){
+    public PollCreateMenu(PollsManager pollsManager, DatabaseManager databaseManager){
         options.add("Yes");
         options.add("No");
         this.pollsManager = pollsManager;
+        this.databaseManager = databaseManager;
 
         this.days = 0;
         this.hours = 1;
@@ -189,10 +192,7 @@ public class PollCreateMenu extends Menu {
 
                 //Converts the date stored in ints to epoch timestamp, so we can convert it
                 //into a date
-                long newTime = new Date().getTime();
-                newTime += this.days*86400000L; //Converts days to milliseconds
-                newTime += this.hours*3600000L; //Converts hours to milliseconds
-                newTime += this.minutes*60000L; //Converts minutes to milliseconds
+                long newTime = new Date().getTime() + Utils.convertTimeToMills(days, hours, minutes);
 
 
                 Poll poll = new Poll(
@@ -203,7 +203,8 @@ public class PollCreateMenu extends Menu {
                         pollIcon,
                         new Date(newTime),
                         pollSettings,
-                        true
+                        true,
+                        databaseManager
                 );
 
                 try {

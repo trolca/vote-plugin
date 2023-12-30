@@ -1,10 +1,13 @@
 package me.trololo11.voteplugin.utils;
 
+import me.trololo11.voteplugin.VotePlugin;
+import me.trololo11.voteplugin.managers.DatabaseManager;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nullable;
+import java.sql.SQLException;
 import java.util.*;
 
 /**
@@ -35,8 +38,9 @@ public class Poll {
     private Date endDate;
     private Material icon;
     private PollSettings pollSettings;
+    private DatabaseManager databaseManager;
 
-    public Poll(String code, OfflinePlayer creator, LinkedList<Option> options, String title, Material icon, Date endDate, PollSettings pollSettings, boolean isActive) {
+    public Poll(String code, OfflinePlayer creator, LinkedList<Option> options, String title, Material icon, Date endDate, PollSettings pollSettings, boolean isActive, DatabaseManager databaseManager) {
 
         if(code.length() != 6){
             throw new IllegalArgumentException("The code of every vote has to be 6 characters long!");
@@ -54,6 +58,7 @@ public class Poll {
         this.endDate = endDate;
         this.pollSettings = pollSettings;
         this.isActive = isActive;
+        this.databaseManager = databaseManager;
     }
 
 
@@ -75,6 +80,10 @@ public class Poll {
 
     public Material getIcon() {
         return icon;
+    }
+
+    public void setIcon(Material icon){
+        this.icon = icon;
     }
 
     /**
@@ -133,6 +142,10 @@ public class Poll {
         return pollSettings;
     }
 
+    public void setPollSettings(PollSettings pollSettings){
+        this.pollSettings = pollSettings;
+    }
+
 
     public String getEndDateString(){
         long timeDifference = endDate.getTime() - new Date().getTime();
@@ -161,8 +174,71 @@ public class Poll {
         return allVotes;
     }
 
+    /**
+     * Gets all the options of this poll
+     * @return An <b>unmodifiable</b> list of all the options for this poll
+     */
     public List<Option> getAllOptions(){
         return Collections.unmodifiableList(options);
+    }
+
+    /**
+     * This should be only used to change the order of the poll options not the amount.
+     * <b>The new list with new options shouldn't have the {@link Option#getOptionNumber()} values changed in any way.
+     * This function changes it automatically and it synchronizes it with the database!</b>
+     * @throws IllegalArgumentException When the list of options is different size from the original one
+     * @param newOptions The list of new options. <b>It should be the same size as the original</b>
+     */
+    public void setOptions(LinkedList<Option> newOptions){
+
+        if(newOptions.size() != this.options.size())
+            throw new IllegalArgumentException("The new options list has to be the same size as the already existing option list");
+
+        boolean isGood = false;
+
+        //We do this to check if the options are sorted correctly and if they aren't then we sort them again
+        //Ik it's not the most optimized way to do it, but we can have max 15 options, so it's not that big of a problem
+        while (!isGood) {
+
+            isGood = true;
+
+            for (int i = 0; i < newOptions.size(); i++) {
+
+                Option newOption = newOptions.get(i);
+
+                if (newOption.getOptionNumber() - 1 != i && options.get(i).getOptionNumber() != newOption.getOptionNumber()) {
+
+                    isGood = false;
+
+                    Option replaceOption = newOptions.get(newOption.getOptionNumber() - 1);
+
+                    options.set(replaceOption.getOptionNumber() - 1, newOption);
+                    options.set(newOption.getOptionNumber() - 1, replaceOption);
+
+                    byte replaceNumber = newOption.getOptionNumber();
+
+                    try {
+                        databaseManager.changeOptionNumber(newOption.getOptionNumber(), (byte) 21, this);
+                        databaseManager.changeOptionNumber(replaceOption.getOptionNumber(), newOption.getOptionNumber(), this);
+                        databaseManager.changeOptionNumber((byte) 21, replaceOption.getOptionNumber(), this);
+                    } catch (SQLException e) {
+                        VotePlugin.getPlugin().logger.severe("[VotePlugin] Error while swapping options in the database!");
+                        VotePlugin.getPlugin().logger.severe("[VotePlugin] The error:");
+                        e.printStackTrace(System.out);
+                        return;
+                    }
+
+                    newOption.setOptionNumber(replaceOption.getOptionNumber());
+                    replaceOption.setOptionNumber(replaceNumber);
+
+                }
+
+
+            }
+
+        }
+
+
     }
 
     @Override
