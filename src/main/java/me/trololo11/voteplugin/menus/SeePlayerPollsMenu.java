@@ -13,6 +13,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nullable;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -96,7 +97,7 @@ public class SeePlayerPollsMenu extends Menu {
             if(!pollsManager.playerSawPoll(player.getUniqueId(), poll)) {
                 try {
                     pollsManager.addPlayerSawPoll(player.getUniqueId(), poll);
-                } catch (SQLException ex) {
+                } catch (SQLException | IOException ex) {
                     throw new RuntimeException(ex);
                 }
             }

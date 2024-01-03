@@ -16,6 +16,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -298,7 +299,9 @@ public class Utils {
         return time;
     }
 
-    public static boolean isLocalizedNameEqual(ItemMeta itemMeta, String string){
+    public static boolean isLocalizedNameEqual(@Nullable ItemMeta itemMeta, String string){
+        if(itemMeta == null) return false;
+
         return itemMeta.getLocalizedName().equalsIgnoreCase(string);
     }
 

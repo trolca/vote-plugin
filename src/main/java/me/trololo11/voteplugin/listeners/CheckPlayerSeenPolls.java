@@ -9,6 +9,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +29,7 @@ public class CheckPlayerSeenPolls implements Listener {
     }
 
     @EventHandler
-    public void onJoin(PlayerJoinEvent e) throws SQLException {
+    public void onJoin(PlayerJoinEvent e) throws SQLException, IOException {
         Player player = e.getPlayer();
         ArrayList<Poll> unseenPolls = new ArrayList<>();
 

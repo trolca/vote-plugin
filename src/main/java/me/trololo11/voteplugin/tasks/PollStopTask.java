@@ -5,6 +5,7 @@ import me.trololo11.voteplugin.managers.PollsManager;
 import me.trololo11.voteplugin.utils.Poll;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.io.IOException;
 import java.sql.SQLException;
 
 /**
@@ -25,10 +26,9 @@ public class PollStopTask extends BukkitRunnable {
     @Override
     public void run() {
 
-       //If the time is 0, and we are counting minutes (so the smallest amount possible) stop the poll
        try {
            pollsManager.stopPoll(poll);
-       } catch (SQLException e) {
+       } catch (SQLException | IOException e) {
            plugin.logger.severe("Error with database while stopping the poll "+ poll.code);
            e.printStackTrace(System.out);
        }

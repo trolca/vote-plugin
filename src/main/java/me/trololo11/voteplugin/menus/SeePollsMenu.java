@@ -16,6 +16,7 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -112,7 +113,7 @@ public class SeePollsMenu extends Menu {
             if(!pollsManager.playerSawPoll(player.getUniqueId(), poll)) {
                 try {
                     pollsManager.addPlayerSawPoll(player.getUniqueId(), poll);
-                } catch (SQLException ex) {
+                } catch (SQLException | IOException ex) {
                     throw new RuntimeException(ex);
                 }
             }

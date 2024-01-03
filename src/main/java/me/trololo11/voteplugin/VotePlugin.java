@@ -7,11 +7,13 @@ import me.trololo11.voteplugin.listeners.CheckPlayerSeenPolls;
 import me.trololo11.voteplugin.listeners.MenusManager;
 import me.trololo11.voteplugin.listeners.PollCreateListener;
 import me.trololo11.voteplugin.managers.DatabaseManager;
+import me.trololo11.voteplugin.managers.MySqlDatabaseManager;
 import me.trololo11.voteplugin.managers.PollsManager;
 import me.trololo11.voteplugin.utils.Poll;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Properties;
 import java.util.logging.Logger;
@@ -42,9 +44,9 @@ public final class VotePlugin extends JavaPlugin {
         timeKeepPollsLogs = getConfig().getInt("time-keep-polls-log");
 
         try {
-            databaseManager = new DatabaseManager();
+            databaseManager = new MySqlDatabaseManager();
             pollsManager = new PollsManager(databaseManager);
-        } catch (SQLException e) {
+        } catch (SQLException | IOException e) {
             logger.severe("Error while connecting to the database");
             logger.severe("Make sure the info in config is accurate!");
             throw new RuntimeException(e);
@@ -71,12 +73,14 @@ public final class VotePlugin extends JavaPlugin {
         for(Poll poll : pollsManager.getPollsToUpdate()){
             try {
                 databaseManager.updatePoll(poll);
-            } catch (SQLException e) {
+            } catch (SQLException | IOException e) {
                 throw new RuntimeException(e);
             }
         }
 
-        databaseManager.turnOffDatabase();
+        if(databaseManager instanceof MySqlDatabaseManager mySqlDatabaseManager){
+            mySqlDatabaseManager.turnOffDatabase();
+        }
     }
 
 

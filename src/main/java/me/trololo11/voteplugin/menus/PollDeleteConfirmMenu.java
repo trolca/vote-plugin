@@ -15,6 +15,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nullable;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.UUID;
 
@@ -77,7 +78,7 @@ public class PollDeleteConfirmMenu extends Menu {
 
                 try {
                     pollsManager.removePoll(poll);
-                } catch (SQLException ex) {
+                } catch (SQLException | IOException ex) {
                     plugin.logger.severe("[VotePlugin] Error while removing poll "+ poll.code);
                     ex.printStackTrace(System.out);
                 }

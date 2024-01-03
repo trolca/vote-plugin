@@ -7,6 +7,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nullable;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -221,7 +222,7 @@ public class Poll {
                         databaseManager.changeOptionNumber(newOption.getOptionNumber(), (byte) 21, this);
                         databaseManager.changeOptionNumber(replaceOption.getOptionNumber(), newOption.getOptionNumber(), this);
                         databaseManager.changeOptionNumber((byte) 21, replaceOption.getOptionNumber(), this);
-                    } catch (SQLException e) {
+                    } catch (SQLException | IOException e) {
                         VotePlugin.getPlugin().logger.severe("[VotePlugin] Error while swapping options in the database!");
                         VotePlugin.getPlugin().logger.severe("[VotePlugin] The error:");
                         e.printStackTrace(System.out);

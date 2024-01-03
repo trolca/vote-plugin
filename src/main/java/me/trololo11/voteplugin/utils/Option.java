@@ -5,6 +5,7 @@ import me.trololo11.voteplugin.managers.DatabaseManager;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -59,13 +60,13 @@ public class Option {
      * @param databaseManager A {@link DatabaseManager} object to synchronise the vote with the database
      * @throws SQLException On database connection error
      */
-    public void addVote(UUID voter,Poll poll, DatabaseManager databaseManager) throws SQLException {
+    public void addVote(UUID voter,Poll poll, DatabaseManager databaseManager) throws SQLException, IOException {
         playersVoted.add(voter);
         databaseManager.addVote(this, poll, voter);
     }
 
 
-    public void removeVote(UUID uuid,Poll poll, DatabaseManager databaseManager) throws SQLException {
+    public void removeVote(UUID uuid,Poll poll, DatabaseManager databaseManager) throws SQLException, IOException {
         playersVoted.remove(uuid);
         databaseManager.removeVote(poll, uuid);
 

@@ -12,6 +12,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -79,7 +80,7 @@ public class VoteCommand implements CommandExecutor {
         }else if(poll.getPollSettings().changeVotes && alreadyVotedOption != null && votingOption.getOptionNumber() != alreadyVotedOption.getOptionNumber()){
             try {
                 alreadyVotedOption.removeVote(player.getUniqueId(), poll, databaseManager);
-            } catch (SQLException e) {
+            } catch (SQLException | IOException e) {
                 plugin.logger.severe("Error while removing vote for poll "+ code + " and option "+ alreadyVotedOption.getOptionNumber());
                 e.printStackTrace(System.out);
             }
@@ -91,7 +92,7 @@ public class VoteCommand implements CommandExecutor {
         //Adds the vote
         try {
             votingOption.addVote(player.getUniqueId(), poll, databaseManager);
-        } catch (SQLException e) {
+        } catch (SQLException | IOException e) {
             plugin.logger.severe("Error while voting for the poll "+ code);
             e.printStackTrace(System.out);
         }

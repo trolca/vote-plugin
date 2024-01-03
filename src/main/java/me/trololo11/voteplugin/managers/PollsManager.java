@@ -9,6 +9,7 @@ import me.trololo11.voteplugin.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -32,7 +33,7 @@ public class PollsManager {
     private VotePlugin plugin = VotePlugin.getPlugin();
 
 
-    public PollsManager(DatabaseManager databaseManager) throws SQLException {
+    public PollsManager(DatabaseManager databaseManager) throws SQLException, IOException {
         this.databaseManager = databaseManager;
         ArrayList<Poll> allPolls = databaseManager.getAllPolls();
         Date todayDate = new Date();
@@ -52,7 +53,7 @@ public class PollsManager {
                     historicPolls.add(poll);
                     poll.isActive = false;
                     pollsToUpdate.add(poll);
-                } catch (SQLException e) {
+                } catch (SQLException | IOException e) {
                     plugin.logger.severe("Error while trying to remove players seen!");
                 }
             }
@@ -62,7 +63,7 @@ public class PollsManager {
                 if (todayDate.getTime() - poll.getEndDate().getTime() < 604800000L) {
                     playersPollsSeenHashMap.put(poll, databaseManager.playersSeenPoll(poll));
                 }
-            }catch (SQLException e){
+            }catch (SQLException | IOException e){
                 plugin.logger.severe("Error while trying to get the players which saw a poll!");
                 e.printStackTrace(System.out);
             }
@@ -97,7 +98,7 @@ public class PollsManager {
      * @param poll The poll to add
      * @throws SQLException While there has been an error while adding the poll to the database
      */
-    public void addPoll(Poll poll) throws SQLException {
+    public void addPoll(Poll poll) throws SQLException, IOException {
         databaseManager.addPoll(poll);
         activePolls.put(poll.code,poll);
         playersPollsSeenHashMap.put(poll, new ArrayList<>());
@@ -129,7 +130,7 @@ public class PollsManager {
      * the results of this poll to every online player
      * @param poll The poll to stop
      */
-    public void stopPoll(Poll poll) throws SQLException {
+    public void stopPoll(Poll poll) throws SQLException, IOException {
         poll.isActive = false;
         activePolls.remove(poll.code);
         pollsToUpdate.add(poll);
@@ -185,7 +186,7 @@ public class PollsManager {
      * @param poll The poll that they saw
      * @throws SQLException On database error
      */
-    public void addPlayerSawPoll(UUID uuid, Poll poll) throws SQLException {
+    public void addPlayerSawPoll(UUID uuid, Poll poll) throws SQLException, IOException {
         playersPollsSeenHashMap.getOrDefault(poll, new ArrayList<>()).add(uuid);
         databaseManager.addPlayerSeenPoll(uuid, poll);
     }
@@ -196,7 +197,7 @@ public class PollsManager {
      * @param poll The poll that they saw
      * @throws SQLException On database error
      */
-    public void addAllPlayersSawPoll(ArrayList<UUID> uuids, Poll poll) throws SQLException {
+    public void addAllPlayersSawPoll(ArrayList<UUID> uuids, Poll poll) throws SQLException, IOException {
         playersPollsSeenHashMap.getOrDefault(poll, new ArrayList<>()).addAll(uuids);
         databaseManager.addPlayersSeenPoll(uuids, poll);
     }
@@ -264,7 +265,7 @@ public class PollsManager {
      * @param poll The poll to remove
      * @throws SQLException On database connection error
      */
-    public void removePoll(Poll poll) throws SQLException {
+    public void removePoll(Poll poll) throws SQLException, IOException {
         if(!poll.isActive)
             throw new IllegalArgumentException("You cannot delete a non active poll!");
 

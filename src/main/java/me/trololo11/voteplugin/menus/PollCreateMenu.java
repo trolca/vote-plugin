@@ -1,5 +1,6 @@
 package me.trololo11.voteplugin.menus;
 
+import me.trololo11.voteplugin.VotePlugin;
 import me.trololo11.voteplugin.events.PollCreateEvent;
 import me.trololo11.voteplugin.managers.DatabaseManager;
 import me.trololo11.voteplugin.managers.PollsManager;
@@ -13,6 +14,7 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -30,6 +32,8 @@ public class PollCreateMenu extends Menu {
     private PollsManager pollsManager;
     private DatabaseManager databaseManager;
     private int days, hours, minutes;
+
+    private VotePlugin plugin = VotePlugin.getPlugin();
 
     public PollCreateMenu(PollsManager pollsManager, DatabaseManager databaseManager){
         options.add("Yes");
@@ -210,8 +214,10 @@ public class PollCreateMenu extends Menu {
                 try {
                     pollsManager.addPoll(poll);
                     Bukkit.getServer().getPluginManager().callEvent(new PollCreateEvent(poll, player));
-                } catch (SQLException ex) {
-                    throw new RuntimeException(ex);
+                } catch (SQLException | IOException ex) {
+                    plugin.logger.severe("[VotePlugin] Error while adding a new poll to the database on poll creation!");
+                    plugin.logger.severe("[VotePlugin] The error: ");
+                    ex.printStackTrace(System.out);
                 }
 
                 player.closeInventory();

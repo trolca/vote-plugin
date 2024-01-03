@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.UUID;
@@ -24,7 +25,7 @@ public class PollCreateListener implements Listener {
     }
 
     @EventHandler
-    public void onCreate(PollCreateEvent e) throws SQLException {
+    public void onCreate(PollCreateEvent e) throws SQLException, IOException {
 
         ArrayList<UUID> playersSeen = new ArrayList<>();
 
