@@ -2,6 +2,7 @@ package me.trololo11.voteplugin;
 
 import me.trololo11.voteplugin.commands.*;
 import me.trololo11.voteplugin.commands.tabcompleters.SeePollTabCompleter;
+import me.trololo11.voteplugin.commands.tabcompleters.ShowPollTabCompleter;
 import me.trololo11.voteplugin.commands.tabcompleters.VoteTabCompleter;
 import me.trololo11.voteplugin.listeners.CheckPlayerSeenPolls;
 import me.trololo11.voteplugin.listeners.MenusManager;
@@ -9,10 +10,12 @@ import me.trololo11.voteplugin.listeners.PollCreateListener;
 import me.trololo11.voteplugin.managers.DatabaseManager;
 import me.trololo11.voteplugin.managers.MySqlDatabaseManager;
 import me.trololo11.voteplugin.managers.PollsManager;
+import me.trololo11.voteplugin.managers.YmlDatabaseManager;
 import me.trololo11.voteplugin.utils.Poll;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Properties;
@@ -23,7 +26,6 @@ public final class VotePlugin extends JavaPlugin {
     public final Properties dbProperties;
     public Logger logger;
 
-    private int timeKeepPollsLogs;
     private DatabaseManager databaseManager;
     private PollsManager pollsManager;
 
@@ -40,11 +42,17 @@ public final class VotePlugin extends JavaPlugin {
         logger = Bukkit.getLogger();
         getConfig().options().copyDefaults(true);
         saveDefaultConfig();
+        boolean useMySqlDatabase = getConfig().getBoolean("use-msql-database");
 
-        timeKeepPollsLogs = getConfig().getInt("time-keep-polls-log");
+        if(!useMySqlDatabase) {
+            File file = new File(this.getDataFolder() + "/polls-data");
+            if (!file.exists()) {
+                file.mkdir();
+            }
+        }
 
         try {
-            databaseManager = new MySqlDatabaseManager();
+            databaseManager = useMySqlDatabase ? new MySqlDatabaseManager() : new YmlDatabaseManager();
             pollsManager = new PollsManager(databaseManager);
         } catch (SQLException | IOException e) {
             logger.severe("Error while connecting to the database");
@@ -56,14 +64,15 @@ public final class VotePlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PollCreateListener(pollsManager), this);
         getServer().getPluginManager().registerEvents(new CheckPlayerSeenPolls(pollsManager), this);
 
-        getCommand("testcommand").setExecutor(new TestCommand(pollsManager));
         getCommand("vote").setExecutor(new VoteCommand(pollsManager, databaseManager));
         getCommand("createpoll").setExecutor(new CreatePollCommand(pollsManager, databaseManager));
         getCommand("seepolls").setExecutor(new SeePollsCommand(pollsManager));
         getCommand("seepoll").setExecutor(new SeePollCommand(pollsManager));
+        getCommand("showpoll").setExecutor(new ShowPollCommand(pollsManager));
 
         getCommand("vote").setTabCompleter(new VoteTabCompleter());
         getCommand("seepoll").setTabCompleter(new SeePollTabCompleter());
+        getCommand("showpoll").setTabCompleter(new ShowPollTabCompleter());
 
     }
 
@@ -78,8 +87,10 @@ public final class VotePlugin extends JavaPlugin {
             }
         }
 
-        if(databaseManager instanceof MySqlDatabaseManager mySqlDatabaseManager){
-            mySqlDatabaseManager.turnOffDatabase();
+        try {
+            databaseManager.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -88,8 +99,5 @@ public final class VotePlugin extends JavaPlugin {
         return VotePlugin.getPlugin(VotePlugin.class);
     }
 
-    public int getTimeKeepPollsLogs() {
-        return timeKeepPollsLogs;
-    }
 
 }

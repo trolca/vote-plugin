@@ -41,8 +41,9 @@ public interface DatabaseManager {
      * Removes every record of player voted in the players_voted table
      * @param poll The poll to remove the vote from
      * @param voter The player to remove the vote data from
+     * @param option The option to remove the option to
      */
-     void removeVote(Poll poll, UUID voter) throws SQLException, IOException;
+     void removeVote(Poll poll, Option option, UUID voter) throws SQLException, IOException;
 
     /**
      * Gets all the players that already saw the specified poll
@@ -87,4 +88,6 @@ public interface DatabaseManager {
      * @param poll The poll to remove
      */
      void removePoll(Poll poll) throws SQLException, IOException;
+
+     void close() throws IOException;
 }

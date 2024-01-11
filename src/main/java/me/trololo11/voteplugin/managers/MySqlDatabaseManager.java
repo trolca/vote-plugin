@@ -105,11 +105,12 @@ public class MySqlDatabaseManager implements DatabaseManager{
      * Closes the connection to the database.<br>
      * <b>USE IT WHEN THE PLUGIN IS DISABLING TO PREVENT ERRORS</b>
      */
-    public void turnOffDatabase(){
+    @Override
+    public void close(){
         ds.close();
     }
 
-
+    @Override
     public void addPoll(Poll poll) throws SQLException {
         Connection connection = getConnection();
 
@@ -157,6 +158,7 @@ public class MySqlDatabaseManager implements DatabaseManager{
         connection.close();
     }
 
+    @Override
     public ArrayList<Poll> getAllPolls() throws SQLException {
         String sql = "SELECT * FROM polls ORDER BY end_date DESC";
 
@@ -255,17 +257,17 @@ public class MySqlDatabaseManager implements DatabaseManager{
         return allPolls;
     }
 
+    @Override
     public void updatePoll(Poll poll) throws SQLException {
-        String sql = "UPDATE polls SET title = ?, icon = ?, end_date = ?, active = ? WHERE code = ?";
+        String sql = "UPDATE polls SET icon = ?, end_date = ?, active = ? WHERE code = ?";
 
         Connection connection = getConnection();
         PreparedStatement statement = connection.prepareStatement(sql);
 
-        statement.setString(1, poll.getTitle());
-        statement.setString(2, poll.getIcon().toString());
-        statement.setLong(3, poll.getEndDate().getTime());
-        statement.setBoolean(4, poll.isActive);
-        statement.setString(5, poll.code);
+        statement.setString(1, poll.getIcon().toString());
+        statement.setLong(2, poll.getEndDate().getTime());
+        statement.setBoolean(3, poll.isActive);
+        statement.setString(4, poll.code);
 
         statement.executeUpdate();
 
@@ -287,6 +289,7 @@ public class MySqlDatabaseManager implements DatabaseManager{
         connection.close();
     }
 
+    @Override
     public void addVote(Option option, Poll poll, UUID voter) throws SQLException {
         String sql = "INSERT INTO players_voted VALUES (?,?,?)";
 
@@ -303,14 +306,16 @@ public class MySqlDatabaseManager implements DatabaseManager{
         connection.close();
     }
 
-    public void removeVote(Poll poll, UUID voter) throws SQLException {
-        String sql = "DELETE FROM players_voted WHERE uuid = ? AND poll_code = ?";
+    @Override
+    public void removeVote(Poll poll,Option option, UUID voter) throws SQLException {
+        String sql = "DELETE FROM players_voted WHERE uuid = ? AND poll_code = ? AND option_num = ?";
 
         Connection connection = getConnection();
         PreparedStatement statement = connection.prepareStatement(sql);
 
         statement.setString(1, voter.toString());
         statement.setString(2, poll.code);
+        statement.setByte(3, option.getOptionNumber());
 
         statement.executeUpdate();
 
@@ -318,6 +323,7 @@ public class MySqlDatabaseManager implements DatabaseManager{
         connection.close();
     }
 
+    @Override
     public ArrayList<UUID> playersSeenPoll(Poll poll) throws SQLException {
         String sql = "SELECT uuid FROM players_seen_poll WHERE poll_code = ?";
 
@@ -340,6 +346,7 @@ public class MySqlDatabaseManager implements DatabaseManager{
         return playersSeen;
     }
 
+    @Override
     public void removeEveryPlayerSeenPoll(Poll poll) throws SQLException {
         String sql = "DELETE FROM players_seen_poll WHERE poll_code = ?";
 
@@ -355,6 +362,7 @@ public class MySqlDatabaseManager implements DatabaseManager{
 
     }
 
+    @Override
     public void addPlayersSeenPoll(ArrayList<UUID> listUuid, Poll poll) throws SQLException {
         if(listUuid.isEmpty()) return;
 
@@ -376,7 +384,7 @@ public class MySqlDatabaseManager implements DatabaseManager{
         connection.close();
     }
 
-
+    @Override
     public void addPlayerSeenPoll(UUID uuid, Poll poll) throws SQLException {
         String sql = "INSERT INTO players_seen_poll VALUES (?,?)";
 
@@ -392,6 +400,7 @@ public class MySqlDatabaseManager implements DatabaseManager{
         connection.close();
     }
 
+    @Override
     public void changeOptionNumber(byte oldNumber, byte newNumber, Poll poll) throws SQLException {
 
         Connection connection = getConnection();
@@ -410,7 +419,7 @@ public class MySqlDatabaseManager implements DatabaseManager{
 
     }
 
-
+    @Override
     public void removePoll(Poll poll) throws SQLException {
         Connection connection = getConnection();
 

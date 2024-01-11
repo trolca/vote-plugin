@@ -207,8 +207,8 @@ public class Utils {
      * For a param 63 it would return "1m3s"
      */
     public static String getStringTime(long time, char[] timeRange){
-        long days = time/85400;
-        time -= days * 85400;
+        long days = time/86400;
+        time -= days * 86400;
         long hours = (time/3600);
         time -= hours * 3600;
         long minutes = (time/60);

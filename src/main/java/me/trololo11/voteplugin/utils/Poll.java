@@ -24,7 +24,7 @@ import java.util.*;
  *     <li>The title of this poll</li>
  *     <li>The icon of this poll stored in {@link Material}</li>
  *     <li>When the poll comes to an end</li>
- *     <li>Does the poll show the amount of votes</li>
+ *     <li>An {@link PollSettings} object of the polls settings</li>
  *     <li>Is the poll active</li>
  * </ul>
  * @see Option
@@ -65,10 +65,6 @@ public class Poll {
 
     public String getTitle() {
         return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     public Date getEndDate() {

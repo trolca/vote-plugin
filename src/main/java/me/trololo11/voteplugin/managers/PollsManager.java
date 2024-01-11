@@ -187,7 +187,9 @@ public class PollsManager {
      * @throws SQLException On database error
      */
     public void addPlayerSawPoll(UUID uuid, Poll poll) throws SQLException, IOException {
-        playersPollsSeenHashMap.getOrDefault(poll, new ArrayList<>()).add(uuid);
+        ArrayList<UUID> playerSeenPoll = playersPollsSeenHashMap.getOrDefault(poll, new ArrayList<>());
+        if(playerSeenPoll.contains(uuid)) return;
+        playerSeenPoll.add(uuid);
         databaseManager.addPlayerSeenPoll(uuid, poll);
     }
 

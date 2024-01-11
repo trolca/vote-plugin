@@ -3,8 +3,6 @@ version: '${project.version}'
 main: me.trololo11.voteplugin.VotePlugin
 api-version: '1.20'
 commands:
-  testcommand:
-    description: "Only a text command dont worry :>"
   vote:
     description: "Vote on a poll"
   createpoll:
@@ -14,6 +12,8 @@ commands:
   seepoll:
     description: "See a specific poll"
     usage: "/seepoll <poll code>"
+  showpoll:
+    description: "Show a poll to a specific player"
 permissions:
   voteplugin.createpolls:
     description: "Players with this permission can create polls"

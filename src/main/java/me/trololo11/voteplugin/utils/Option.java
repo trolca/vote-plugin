@@ -1,8 +1,6 @@
 package me.trololo11.voteplugin.utils;
 
-import com.google.errorprone.annotations.RestrictedApi;
 import me.trololo11.voteplugin.managers.DatabaseManager;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.io.IOException;
@@ -68,7 +66,7 @@ public class Option {
 
     public void removeVote(UUID uuid,Poll poll, DatabaseManager databaseManager) throws SQLException, IOException {
         playersVoted.remove(uuid);
-        databaseManager.removeVote(poll, uuid);
+        databaseManager.removeVote(poll,this, uuid);
 
     }
 
