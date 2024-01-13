@@ -48,7 +48,8 @@ public class Utils {
 
             TextComponent optionText = new TextComponent(ChatColor.GRAY.toString() + (i+1) + " - "+ChatColor.RESET+ Utils.chat(option.getName()));
             optionText.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/vote "+poll.code + " " + (i+1) ));
-            optionText.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("Click to vote! ")));
+            optionText.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("Click to vote!" +
+                    (poll.getPollSettings().changeVotes ? "" : "\n" + ChatColor.RED + "This poll doesn't allow changing votes!") )));
 
             player.spigot().sendMessage(optionText);
         }
@@ -96,6 +97,28 @@ public class Utils {
      * @return The created {@link ItemStack}
      */
     public static ItemStack createItem(Material material, String name, String localizedName, String... lore){
+        ItemStack item = new ItemStack(material);
+
+        ArrayList<String> loreArray = new ArrayList<>();
+
+        for(String string : lore){
+            loreArray.add(Utils.chat(string));
+        }
+
+        item.setItemMeta(getItemMeta(item.getItemMeta(), name, localizedName, loreArray));
+
+        return item;
+    }
+
+    /**
+     * Creates a new {@link ItemStack} from the specified parameters
+     * @param material The material of this item
+     * @param name The display name of this item
+     * @param localizedName The localized name of this item
+     * @param lore The LOREEE of this item
+     * @return The created {@link ItemStack}
+     */
+    public static ItemStack createItem(Material material, String name, String localizedName,List<String> lore){
         ItemStack item = new ItemStack(material);
 
         ArrayList<String> loreArray = new ArrayList<>();

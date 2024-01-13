@@ -13,6 +13,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -89,11 +90,19 @@ public class SeePollMenu extends Menu {
             ItemStack optionItem;
 
             if(isPollActive) {
-                optionItem = Utils.createItem(optionMaterial, "&8Option " + option.getOptionNumber() + ": &f" + option.getName() + optionPercentageS, "option-" + i,
-                        hasVoted ?
-                                (playerVotedOnThisOption ? "&aYou voted on this option" :
-                                        (poll.getPollSettings().changeVotes ? "&2Click to change your vote" : "&2You've voted on an other option!"))
-                                : "&eClick to vote for this option!");
+                ArrayList<String> lore = new ArrayList<>();
+
+                lore.add(Utils.chat(hasVoted ?
+                        (playerVotedOnThisOption ? "&aYou voted on this option" :
+                                (poll.getPollSettings().changeVotes ? "&2Click to change your vote" : "&2You've voted on an other option!"))
+                        : "&eClick to vote for this option!"));
+                if(poll.getPollSettings().changeVotes && !hasVoted){
+                    lore.add(ChatColor.RED + "This poll doesn't");
+                    lore.add(ChatColor.RED + "allow changing votes!");
+                }
+
+                optionItem = Utils.createItem(optionMaterial, "&8Option " + option.getOptionNumber() + ": &f" + option.getName() + optionPercentageS, "option-" + i, lore);
+
             }else{
                 optionItem = option.getAmountOfVotes() == winningOption.getAmountOfVotes() ? //Is a winning option
                         Utils.createItem(Material.YELLOW_DYE, "&6&lOption " + option.getOptionNumber() + ": " + option.getName() + optionPercentageS, "option-" + i,

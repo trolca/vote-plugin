@@ -308,7 +308,7 @@ public class MySqlDatabaseManager implements DatabaseManager{
 
     @Override
     public void removeVote(Poll poll,Option option, UUID voter) throws SQLException {
-        String sql = "DELETE FROM players_voted WHERE uuid = ? AND poll_code = ? AND option_num = ?";
+        String sql = "DELETE FROM players_voted WHERE uuid = ? AND poll_code = ? AND vote_option = ?";
 
         Connection connection = getConnection();
         PreparedStatement statement = connection.prepareStatement(sql);
