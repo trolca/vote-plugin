@@ -84,7 +84,7 @@ public class SeePollMenu extends Menu {
             String optionPercentageS = "";
             if(!poll.isActive || poll.getPollSettings().showVotes){
                 int optionVotes = option.getAmountOfVotes();
-                optionPercentageS = ChatColor.GRAY + " ("+((int) ( (double) optionVotes/allVotes )*100) + "%)";
+                optionPercentageS = ChatColor.GRAY + " ("+((int) ((optionVotes/(double) allVotes )*100 ) ) + "%)";
             }
 
             ItemStack optionItem;

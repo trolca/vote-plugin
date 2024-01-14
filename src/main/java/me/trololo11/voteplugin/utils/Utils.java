@@ -75,7 +75,7 @@ public class Utils {
         player.sendMessage(ChatColor.GRAY + ChatColor.BOLD.toString() + "Results:");
         for(Option option : poll.getAllOptions()){
             int amountOfVotes = option.getAmountOfVotes();
-            int percentageVotes = (int) ( (double) amountOfVotes/allVotes )*100;
+            int percentageVotes = ((int) ((amountOfVotes/(double) allVotes )*100 ) );
 
             if(amountOfVotes == wonOption.getAmountOfVotes()){
                 player.sendMessage(ChatColor.GRAY.toString() + option.getOptionNumber() + " - "

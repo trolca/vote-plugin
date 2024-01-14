@@ -11,8 +11,10 @@ import me.trololo11.voteplugin.managers.DatabaseManager;
 import me.trololo11.voteplugin.managers.MySqlDatabaseManager;
 import me.trololo11.voteplugin.managers.PollsManager;
 import me.trololo11.voteplugin.managers.YmlDatabaseManager;
+import me.trololo11.voteplugin.utils.Menu;
 import me.trololo11.voteplugin.utils.Poll;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -91,6 +93,13 @@ public final class VotePlugin extends JavaPlugin {
             databaseManager.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+
+        //We close our opened inventories on disable to disallow players to take items from them
+        //on reload
+        for(Player player : Bukkit.getOnlinePlayers()){
+            if(player.getOpenInventory().getTopInventory().getHolder() instanceof Menu)
+                player.closeInventory();
         }
     }
 

@@ -163,6 +163,7 @@ public class PollCreateMenu extends Menu {
             //New option create
             case GRAY_DYE -> {
                 if(!Utils.isLocalizedNameEqual(item.getItemMeta(), "new-option")) return;
+                if(options.size() >= 15) return;
 
                 options.add("New option");
 

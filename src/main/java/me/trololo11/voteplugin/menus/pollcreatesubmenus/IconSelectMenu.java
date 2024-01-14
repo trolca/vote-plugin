@@ -9,6 +9,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Collections;
 import java.util.List;
 
 public class IconSelectMenu extends InputMenu {
@@ -37,13 +38,7 @@ public class IconSelectMenu extends InputMenu {
     @Override
     protected List<AnvilGUI.ResponseAction> onQuit(Player player) {
 
-        player.closeInventory();
-        if(pollCreateMenu == null)
-            editPollMenu.open(player);
-        else
-            pollCreateMenu.open(player);
-
-        return List.of(AnvilGUI.ResponseAction.openInventory(pollCreateMenu == null ? editPollMenu.getInventory() : pollCreateMenu.getInventory()));
+        return Collections.emptyList();
     }
 
     @Override
@@ -62,6 +57,6 @@ public class IconSelectMenu extends InputMenu {
             pollCreateMenu.open(player);
         }
 
-        return List.of(AnvilGUI.ResponseAction.close());
+        return Collections.emptyList();
     }
 }
