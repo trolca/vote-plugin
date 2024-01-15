@@ -17,6 +17,7 @@ import java.util.*;
  * This class manages all the polls that are used in this plugin.
  * This is the place where you should get a {@link Poll} object and
  * add them.
+ * This class also stores the info about what players saw which poll.
  */
 public class PollsManager {
     private LinkedHashMap<String, Poll> activePolls = new LinkedHashMap<>();
