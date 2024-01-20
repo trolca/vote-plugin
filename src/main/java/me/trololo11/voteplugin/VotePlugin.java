@@ -27,6 +27,7 @@ public final class VotePlugin extends JavaPlugin {
 
     public final Properties dbProperties;
     public Logger logger;
+    private int pollsNotLoad;
 
     private DatabaseManager databaseManager;
     private PollsManager pollsManager;
@@ -45,6 +46,7 @@ public final class VotePlugin extends JavaPlugin {
         getConfig().options().copyDefaults(true);
         saveDefaultConfig();
         boolean useMySqlDatabase = getConfig().getBoolean("use-msql-database");
+        pollsNotLoad = getConfig().getInt("load-finished-polls-before");
 
         if(!useMySqlDatabase) {
             File file = new File(this.getDataFolder() + "/polls-data");
@@ -103,6 +105,9 @@ public final class VotePlugin extends JavaPlugin {
         }
     }
 
+    public int getPollsNotLoad() {
+        return pollsNotLoad;
+    }
 
     public static VotePlugin getPlugin(){
         return VotePlugin.getPlugin(VotePlugin.class);

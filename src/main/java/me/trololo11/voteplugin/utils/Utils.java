@@ -283,7 +283,7 @@ public class Utils {
                 String optionPercentageS = "";
                 if(!poll.isActive || poll.getPollSettings().showVotes){
                     int optionVotes = option.getAmountOfVotes();
-                    optionPercentageS = ChatColor.GRAY + " ("+((int) ( (double) optionVotes/allVotes )*100) + "%)";
+                    optionPercentageS = ChatColor.GRAY + " ("+((int) ((optionVotes/(double) allVotes )*100 ) ) + "%)";
                 }
                 boolean hasVoted = option.getPlayersVoted().contains(player.getUniqueId());
                 String optionName = Utils.chat(option.getName());

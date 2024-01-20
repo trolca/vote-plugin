@@ -38,6 +38,7 @@ public class PollsManager {
         this.databaseManager = databaseManager;
         ArrayList<Poll> allPolls = databaseManager.getAllPolls();
         Date todayDate = new Date();
+        long timeNotLoad = plugin.getPollsNotLoad() == -1 ? -1 : plugin.getPollsNotLoad() * 86400000L;
 
         allPolls.forEach(poll -> {
 
@@ -46,9 +47,9 @@ public class PollsManager {
             if(poll.getEndDate().getTime() > todayDate.getTime()){
                 activePolls.put(poll.code, poll);
                 createStopTask(poll);
-            }else if(timeDifference < 604800000L && !poll.isActive){
+            }else if( (timeNotLoad == -1 || timeDifference < timeNotLoad) && !poll.isActive){
                 historicPolls.add(poll);
-            }else if(timeDifference < 604800000L){
+            }else if(timeNotLoad == -1 || timeDifference < timeNotLoad){
                 try {
                     databaseManager.removeEveryPlayerSeenPoll(poll);
                     historicPolls.add(poll);

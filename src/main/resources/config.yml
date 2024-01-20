@@ -3,5 +3,6 @@ host: 'localhost'
 port: '' #leave empty to use the default (1433)
 user: 'root'
 password: ''
-
 database-name: 'vote_plugin_database'
+
+load-finished-polls-before: 7 #You can specify after what time the finished polls are not going to be loaded (the time is provided in days) (type -1 to always load every finished poll saved in the database)
