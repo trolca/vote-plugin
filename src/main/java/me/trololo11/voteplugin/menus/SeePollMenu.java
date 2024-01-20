@@ -158,6 +158,7 @@ public class SeePollMenu extends Menu {
             case OAK_SIGN -> {
                 if(!item.getItemMeta().getLocalizedName().startsWith("option-")) return;
                 if(item.containsEnchantment(Enchantment.MENDING)) return;
+                if(!poll.isActive) return;
 
                 byte optionNum = Byte.parseByte(item.getItemMeta().getLocalizedName().split("-")[1]);
 

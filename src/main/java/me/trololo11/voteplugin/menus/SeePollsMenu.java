@@ -1,24 +1,18 @@
 package me.trololo11.voteplugin.menus;
 
-import me.trololo11.voteplugin.managers.DatabaseManager;
 import me.trololo11.voteplugin.managers.PollsManager;
 import me.trololo11.voteplugin.utils.Menu;
-import me.trololo11.voteplugin.utils.Option;
 import me.trololo11.voteplugin.utils.Poll;
 import me.trololo11.voteplugin.utils.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**

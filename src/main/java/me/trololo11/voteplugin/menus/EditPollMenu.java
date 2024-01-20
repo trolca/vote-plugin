@@ -1,6 +1,5 @@
 package me.trololo11.voteplugin.menus;
 
-import me.trololo11.voteplugin.managers.DatabaseManager;
 import me.trololo11.voteplugin.managers.PollsManager;
 import me.trololo11.voteplugin.menus.pollcreatesubmenus.EndDateSetMenu;
 import me.trololo11.voteplugin.menus.pollcreatesubmenus.IconSelectMenu;
@@ -17,7 +16,6 @@ import javax.annotation.Nullable;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
 
 public class EditPollMenu extends Menu {
 

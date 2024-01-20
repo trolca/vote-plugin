@@ -9,7 +9,10 @@ import org.bukkit.entity.Player;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.Collections;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * This class stores info for every vote that has been created in this plugin. <br>

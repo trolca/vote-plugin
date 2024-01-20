@@ -48,9 +48,9 @@ public class PollsManager {
             if(poll.getEndDate().getTime() > todayDate.getTime()){
                 activePolls.put(poll.code, poll);
                 createStopTask(poll);
-            }else if( (timeNotLoad == -1 || timeDifference < timeNotLoad) && !poll.isActive){
+            }else if( (timeNotLoad < 0 || timeDifference < timeNotLoad) && !poll.isActive){
                 historicPolls.add(poll);
-            }else if(timeNotLoad == -1 || timeDifference < timeNotLoad){
+            }else if(timeNotLoad < 0 || timeDifference < timeNotLoad){
                 try {
                     databaseManager.removeEveryPlayerSeenPoll(poll);
                     historicPolls.add(poll);
@@ -226,6 +226,13 @@ public class PollsManager {
      */
     public void addPollToBeUpdated(Poll poll){
         pollsToUpdate.add(poll);
+    }
+
+    /**
+     * Removes every poll from the list to be updated. <b>This should be used only when the polls were update to the database</b>
+     */
+    public void clearPollsToBeUpdated(){
+        pollsToUpdate.clear();
     }
 
     /**

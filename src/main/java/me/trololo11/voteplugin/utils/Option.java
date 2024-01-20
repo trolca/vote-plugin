@@ -5,7 +5,10 @@ import org.jetbrains.annotations.ApiStatus;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * This is an object that stores info for an option for a {@link Poll}.

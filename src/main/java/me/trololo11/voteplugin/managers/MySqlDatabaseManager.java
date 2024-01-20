@@ -10,8 +10,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 
 import java.sql.*;
-import java.util.*;
 import java.util.Date;
+import java.util.*;
 
 /**
  * This class is responsible for connection and modifying the sql database.

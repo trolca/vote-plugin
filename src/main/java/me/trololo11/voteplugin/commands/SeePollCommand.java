@@ -1,6 +1,5 @@
 package me.trololo11.voteplugin.commands;
 
-import me.trololo11.voteplugin.managers.DatabaseManager;
 import me.trololo11.voteplugin.managers.PollsManager;
 import me.trololo11.voteplugin.menus.SeePollMenu;
 import me.trololo11.voteplugin.utils.Poll;

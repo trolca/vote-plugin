@@ -12,6 +12,7 @@ import me.trololo11.voteplugin.managers.DatabaseManager;
 import me.trololo11.voteplugin.managers.MySqlDatabaseManager;
 import me.trololo11.voteplugin.managers.PollsManager;
 import me.trololo11.voteplugin.managers.YmlDatabaseManager;
+import me.trololo11.voteplugin.tasks.SynchroniseData;
 import me.trololo11.voteplugin.utils.Menu;
 import me.trololo11.voteplugin.utils.Poll;
 import org.bukkit.Bukkit;
@@ -28,7 +29,9 @@ public final class VotePlugin extends JavaPlugin {
 
     public final Properties dbProperties;
     public Logger logger;
+
     private int pollsNotLoad;
+    private boolean announceSaveDatabase;
 
     private DatabaseManager databaseManager;
     private PollsManager pollsManager;
@@ -49,6 +52,7 @@ public final class VotePlugin extends JavaPlugin {
         boolean useMySqlDatabase = getConfig().getBoolean("use-msql-database");
         pollsNotLoad = getConfig().getInt("load-finished-polls-before");
 
+
         if(!useMySqlDatabase) {
             File file = new File(this.getDataFolder() + "/polls-data");
             if (!file.exists()) {
@@ -64,6 +68,12 @@ public final class VotePlugin extends JavaPlugin {
             logger.severe("Make sure the info in config is accurate!");
             throw new RuntimeException(e);
         }
+
+        long synchronizeDelay = getConfig().getInt("synchronize-database") <= 0 ? 0 : getConfig().getInt("synchronize-database")*1200L;
+        announceSaveDatabase = getConfig().getBoolean("announce-synchronize");
+
+        if(synchronizeDelay != 0)
+            new SynchroniseData(pollsManager, databaseManager).runTaskTimer(this, synchronizeDelay, synchronizeDelay);
 
         getServer().getPluginManager().registerEvents(new MenusManager(), this);
         getServer().getPluginManager().registerEvents(new PollCreateListener(pollsManager), this);
@@ -110,6 +120,10 @@ public final class VotePlugin extends JavaPlugin {
 
     public int getPollsNotLoad() {
         return pollsNotLoad;
+    }
+
+    public boolean isAnnounceSaveDatabase() {
+        return announceSaveDatabase;
     }
 
     public static VotePlugin getPlugin(){
