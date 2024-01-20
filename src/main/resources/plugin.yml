@@ -14,8 +14,13 @@ commands:
     usage: "/seepoll <poll code>"
   showpoll:
     description: "Show a poll to a specific player"
+  finishpoll:
+    description: "Finishes the specified poll"
+    usage: "/finishpoll <poll code>"
 permissions:
   voteplugin.createpolls:
     description: "Players with this permission can create polls"
   voteplugin.deletepolls:
     description: "Players with this permission can delete other player's polls"
+  voteplugin.stoppolls:
+    description: "Players with this permission can end polls"

@@ -160,6 +160,7 @@ public class EditPollMenu extends Menu {
                 poll.setEndDate(newEndDate);
                 poll.setOptions(newOptions);
 
+                pollsManager.createStopTask(poll);
                 pollsManager.addPollToBeUpdated(poll);
 
                 if(seePollMenu != null)

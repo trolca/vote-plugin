@@ -23,6 +23,7 @@ public class PollsManager {
     private LinkedHashMap<String, Poll> activePolls = new LinkedHashMap<>();
     private HashMap<String, Poll> allPolls = new HashMap<>();
     private HashMap<Poll, ArrayList<UUID> > playersPollsSeenHashMap = new HashMap<>();
+    private HashMap<Poll, PollStopTask> pollsStopTasks = new HashMap<>();
     private DatabaseManager databaseManager;
     private ArrayList<Poll> historicPolls = new ArrayList<>();
     private ArrayList<Poll> allPollsList = new ArrayList<>();
@@ -111,16 +112,26 @@ public class PollsManager {
     }
 
     /**
-     * This function creates a {@link PollStopTask} for the provided poll.
+     * This function creates a {@link PollStopTask} for the provided poll. <br>
+     * If this poll already has a {@link PollStopTask} then it cancels the old one and creates a new one based on the end
+     * time left.
      * @param poll The poll to create the task for
      */
-    private void createStopTask(Poll poll){
+    public void createStopTask(Poll poll){
+
+        PollStopTask oldPollStopTask = pollsStopTasks.get(poll);
+        if(oldPollStopTask != null){
+            oldPollStopTask.cancel();
+        }
 
         Date endDate = poll.getEndDate();
         long timeBetween = endDate.getTime() - new Date().getTime();
         long delay = (timeBetween/1000)*20;
 
-        new PollStopTask(this, poll).runTaskLater(plugin, delay);
+        PollStopTask newPollStopTask = new PollStopTask(this, poll);
+        newPollStopTask.runTaskLater(plugin, delay);
+
+        pollsStopTasks.put(poll, newPollStopTask);
 
         if(poll.getPollSettings().remindVote && delay > 72000L)
             new RemindToVoteTask(poll).runTaskLater(plugin, delay-72000L);
@@ -137,6 +148,8 @@ public class PollsManager {
         activePolls.remove(poll.code);
         pollsToUpdate.add(poll);
         recentlyFinishedPolls.add(poll);
+        pollsStopTasks.get(poll).cancel();
+        pollsStopTasks.remove(poll);
 
         new ChangeHistoricPoll(this, poll).runTaskLater(plugin, 72000L);
 
@@ -165,9 +178,9 @@ public class PollsManager {
     }
 
     /**
-     * Gets the <b>active</b> poll
+     * Gets the <b>active</b> poll from the specified code
      * @param code The code of the poll that you want to get
-     * @return The active poll
+     * @return The active poll. Null if a poll with the code doesn't exist.
      */
     public Poll getActivePoll(String code){
         return activePolls.get(code);

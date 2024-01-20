@@ -190,24 +190,16 @@ public class MySqlDatabaseManager implements DatabaseManager{
             while(optionsResults.next()){
                 optionNum++;
                 //Firstly it gets all the options and how much votes does it had.
-                PreparedStatement playersVotesStatement = connection.prepareStatement("SELECT COUNT(*) as `amount_votes`, uuid FROM players_voted WHERE poll_code = ? AND vote_option = ?");
+                PreparedStatement playersVotesStatement = connection.prepareStatement("SELECT uuid FROM players_voted WHERE poll_code = ? AND vote_option = ?");
+
                 playersVotesStatement.setString(1, code);
                 playersVotesStatement.setByte(2 ,optionsResults.getByte("option_num"));
 
                 ResultSet playerVotedResults = playersVotesStatement.executeQuery();
 
-                ArrayList<UUID> playersVoted;
+                ArrayList<UUID> playersVoted = new ArrayList<>();
 
-                //if there is a number of votes counted we create an array list with the predefined
-                //size to optimise adding to it
-                if(playerVotedResults.next()){
-                    playersVoted = new ArrayList<>(playerVotedResults.getInt("amount_votes"));
-                    if(playerVotedResults.getString("uuid") != null) playersVoted.add(UUID.fromString(playerVotedResults.getString("uuid")));
-                }else{
-                    playersVoted = new ArrayList<>(1);
-                }
-
-                while (playerVotedResults.next()){
+                while(playerVotedResults.next()){
                     playersVoted.add(UUID.fromString(playerVotedResults.getString("uuid")));
                 }
 
