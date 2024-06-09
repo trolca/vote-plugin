@@ -122,7 +122,7 @@ public class PollCreateMenu extends Menu {
         ItemStack item = e.getCurrentItem();
         Player player = (Player) e.getWhoClicked();
 
-        if(Utils.isLocalizedNameEqual(item.getItemMeta(), "icon-select")) {
+        if(Utils.isPrivateNameEqual(item.getItemMeta(), "icon-select")) {
             new IconSelectMenu(this).open(player);
             return;
         }
@@ -130,23 +130,23 @@ public class PollCreateMenu extends Menu {
         switch (item.getType()){
 
             case LIGHT_GRAY_DYE -> { //Settings menu
-                if(!Utils.isLocalizedNameEqual(item.getItemMeta(), "settings")) return;
+                if(!Utils.isPrivateNameEqual(item.getItemMeta(), "settings")) return;
 
                 new PollSettingsMenu(this ,pollSettings).open(player);
             }
 
             //Change title of poll
             case NAME_TAG -> {
-                if(!Utils.isLocalizedNameEqual(item.getItemMeta(), "title-select")) return;
+                if(!Utils.isPrivateNameEqual(item.getItemMeta(), "title-select")) return;
 
                 new TitleSetMenu(this).open(player);
             }
 
             //Options editing and deleting
             case OAK_SIGN -> {
-                if(!item.getItemMeta().getLocalizedName().startsWith("option-")) return;
+                if(!Utils.getPrivateName(item).startsWith("option-")) return;
 
-                byte num = Byte.parseByte(item.getItemMeta().getLocalizedName().split("-")[1]);
+                byte num = Byte.parseByte(Utils.getPrivateName(item).split("-")[1]);
 
                 if(e.getClick() == ClickType.LEFT) { //Left click edit right delete
                     new OptionEditMenu(this, options.get(num), num).open(player);
@@ -162,7 +162,7 @@ public class PollCreateMenu extends Menu {
 
             //New option create
             case GRAY_DYE -> {
-                if(!Utils.isLocalizedNameEqual(item.getItemMeta(), "new-option")) return;
+                if(!Utils.isPrivateNameEqual(item.getItemMeta(), "new-option")) return;
                 if(options.size() >= 15) return;
 
                 options.add("New option");
@@ -172,21 +172,21 @@ public class PollCreateMenu extends Menu {
 
             //exit
             case RED_DYE -> {
-                if(!Utils.isLocalizedNameEqual(item.getItemMeta(), "cancel")) return;
+                if(!Utils.isPrivateNameEqual(item.getItemMeta(), "cancel")) return;
 
                 player.closeInventory();
             }
 
             //Change the end time
             case CLOCK -> {
-                if(!Utils.isLocalizedNameEqual(item.getItemMeta(), "end-date")) return;
+                if(!Utils.isPrivateNameEqual(item.getItemMeta(), "end-date")) return;
 
                 new EndDateSetMenu(this, days, hours, minutes).open(player);
             }
 
             //Confirm creation
             case GREEN_DYE -> {
-                if(!Utils.isLocalizedNameEqual(item.getItemMeta(), "confirm")) return;
+                if(!Utils.isPrivateNameEqual(item.getItemMeta(), "confirm")) return;
 
                 LinkedList<Option> pollOptions = new LinkedList<>();
 

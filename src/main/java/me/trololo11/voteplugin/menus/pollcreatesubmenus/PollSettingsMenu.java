@@ -73,7 +73,7 @@ public class PollSettingsMenu extends Menu {
 
     @Override
     public void handleMenu(InventoryClickEvent e) {
-        String localizedName = e.getCurrentItem().getItemMeta().getLocalizedName();
+        String localizedName = Utils.getPrivateName(e.getCurrentItem());
         Player player = (Player) e.getWhoClicked();
 
         if(localizedName.equalsIgnoreCase("back")){

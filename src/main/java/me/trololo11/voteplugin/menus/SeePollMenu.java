@@ -145,7 +145,7 @@ public class SeePollMenu extends Menu {
         switch (item.getType()){
 
             case RED_DYE -> {
-                if(!Utils.isLocalizedNameEqual(item.getItemMeta(), "back")) return;
+                if(!Utils.isPrivateNameEqual(item.getItemMeta(), "back")) return;
 
                 if(menuBack == null){
                     player.closeInventory();
@@ -156,11 +156,11 @@ public class SeePollMenu extends Menu {
             }
 
             case OAK_SIGN -> {
-                if(!item.getItemMeta().getLocalizedName().startsWith("option-")) return;
+                if(!Utils.getPrivateName(item).startsWith("option-")) return;
                 if(item.containsEnchantment(Enchantment.MENDING)) return;
                 if(!poll.isActive) return;
 
-                byte optionNum = Byte.parseByte(item.getItemMeta().getLocalizedName().split("-")[1]);
+                byte optionNum = Byte.parseByte(Utils.getPrivateName(item).split("-")[1]);
 
                 player.performCommand("vote "+poll.code+" "+ (optionNum+1));
 
@@ -169,7 +169,7 @@ public class SeePollMenu extends Menu {
             }
 
             case ORANGE_DYE -> {
-                if(!Utils.isLocalizedNameEqual(item.getItemMeta(), "edit-poll")) return;
+                if(!Utils.isPrivateNameEqual(item.getItemMeta(), "edit-poll")) return;
                 if(!player.getUniqueId().equals(poll.creator.getUniqueId())) return;
                 if(!poll.isActive) return;
 
@@ -177,7 +177,7 @@ public class SeePollMenu extends Menu {
             }
 
             case PLAYER_HEAD -> {
-                if(!Utils.isLocalizedNameEqual(item.getItemMeta(), "poll-creator")) return;
+                if(!Utils.isPrivateNameEqual(item.getItemMeta(), "poll-creator")) return;
 
                 if(menuBack instanceof SeePlayerPollsMenu)
                     return;
@@ -187,7 +187,7 @@ public class SeePollMenu extends Menu {
             }
 
             case BARRIER -> {
-                if(!Utils.isLocalizedNameEqual(item.getItemMeta(), "delete-poll")) return;
+                if(!Utils.isPrivateNameEqual(item.getItemMeta(), "delete-poll")) return;
                 if(!player.getUniqueId().equals(poll.creator.getUniqueId()) && !player.hasPermission("voteplugin.deletepolls")) return;
                 if(!poll.isActive) return;
 

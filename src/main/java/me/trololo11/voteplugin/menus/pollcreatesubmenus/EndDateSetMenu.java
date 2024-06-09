@@ -86,7 +86,7 @@ public class EndDateSetMenu extends Menu {
         switch (item.getType()){
 
             case RED_DYE -> {
-                if(!Utils.isLocalizedNameEqual(item.getItemMeta(), "back")) return;
+                if(!Utils.isPrivateNameEqual(item.getItemMeta(), "back")) return;
 
                 if(pollCreateMenu == null)
                     editPollMenu.open(player);
@@ -95,13 +95,13 @@ public class EndDateSetMenu extends Menu {
             }
 
             case NAME_TAG -> {
-                if(!Utils.isLocalizedNameEqual(item.getItemMeta(), "custom-time")) return;
+                if(!Utils.isPrivateNameEqual(item.getItemMeta(), "custom-time")) return;
 
                 new EndDateSetManuallyMenu(this).open(player);
             }
 
             case LIME_STAINED_GLASS_PANE -> {
-                if(!Utils.isLocalizedNameEqual(item.getItemMeta(), "time-up")) return;
+                if(!Utils.isPrivateNameEqual(item.getItemMeta(), "time-up")) return;
 
                 ItemStack itemUnder = inventory.getItem(e.getSlot()+9);
 
@@ -117,7 +117,7 @@ public class EndDateSetMenu extends Menu {
             }
 
             case RED_STAINED_GLASS_PANE -> {
-                if(!Utils.isLocalizedNameEqual(item.getItemMeta(), "time-down")) return;
+                if(!Utils.isPrivateNameEqual(item.getItemMeta(), "time-down")) return;
 
                 ItemStack itemUnder = inventory.getItem(e.getSlot()-9);
 
@@ -133,7 +133,7 @@ public class EndDateSetMenu extends Menu {
             }
 
             case GREEN_DYE -> {
-                if(!Utils.isLocalizedNameEqual(item.getItemMeta(), "confirm")) return;
+                if(!Utils.isPrivateNameEqual(item.getItemMeta(), "confirm")) return;
 
                 if(days == 0 && hours == 0 && minutes == 0)
                     return;

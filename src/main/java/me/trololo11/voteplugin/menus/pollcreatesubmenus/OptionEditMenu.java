@@ -63,7 +63,7 @@ public class OptionEditMenu extends Menu {
 
             //Cancel changes
             case RED_DYE ->{
-                if(!Utils.isLocalizedNameEqual(item.getItemMeta(), "cancel")) return;
+                if(!Utils.isPrivateNameEqual(item.getItemMeta(), "cancel")) return;
 
                 LinkedList<String> options = pollCreateMenu.getOptions();
 
@@ -78,21 +78,21 @@ public class OptionEditMenu extends Menu {
 
             //Change option name
             case NAME_TAG -> {
-                if(!Utils.isLocalizedNameEqual(item.getItemMeta(), "change-name")) return;
+                if(!Utils.isPrivateNameEqual(item.getItemMeta(), "change-name")) return;
 
                 new OptionNameSetMenu(this).open(player);
             }
 
             //Change option number
             case STRING -> {
-                if(!Utils.isLocalizedNameEqual(item.getItemMeta(), "change-number")) return;
+                if(!Utils.isPrivateNameEqual(item.getItemMeta(), "change-number")) return;
 
                 new ChangeOptionNumMenu(this, pollCreateMenu).open(player);
             }
 
             //Confirm changes
             case GREEN_DYE -> {
-                if(!Utils.isLocalizedNameEqual(item.getItemMeta(), "confirm")) return;
+                if(!Utils.isPrivateNameEqual(item.getItemMeta(), "confirm")) return;
                 LinkedList<String> options = pollCreateMenu.getOptions();
 
                 if(optionNumber == startNumber){

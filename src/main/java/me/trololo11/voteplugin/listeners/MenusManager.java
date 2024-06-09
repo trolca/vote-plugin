@@ -1,6 +1,7 @@
 package me.trololo11.voteplugin.listeners;
 
 import me.trololo11.voteplugin.utils.Menu;
+import me.trololo11.voteplugin.utils.Utils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -21,7 +22,7 @@ public class MenusManager implements Listener {
 
             if (item == null) return;
             if (!item.hasItemMeta()) return;
-            if (!item.getItemMeta().hasLocalizedName()) return;
+            if (Utils.getPrivateName(item) == null) return;
             if(!(e.getWhoClicked() instanceof Player)){
                 e.getWhoClicked().closeInventory();
                 return;

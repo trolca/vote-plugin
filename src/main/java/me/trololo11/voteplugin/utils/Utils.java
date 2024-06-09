@@ -1,5 +1,6 @@
 package me.trololo11.voteplugin.utils;
 
+import me.trololo11.voteplugin.VotePlugin;
 import me.trololo11.voteplugin.managers.PollsManager;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -15,6 +16,7 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.persistence.PersistentDataType;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -180,7 +182,7 @@ public class Utils {
     private static ItemMeta getItemMeta(ItemMeta itemMeta, String displayName, String localizedName, List<String> lore){
 
         itemMeta.setDisplayName(Utils.chat(displayName));
-        itemMeta.setLocalizedName(localizedName);
+        itemMeta.getPersistentDataContainer().set(VotePlugin.PRIVATE_NAME_KEY, PersistentDataType.STRING, localizedName);
         itemMeta.setLore(lore);
         itemMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_UNBREAKABLE);
 
@@ -322,10 +324,20 @@ public class Utils {
         return time;
     }
 
-    public static boolean isLocalizedNameEqual(@Nullable ItemMeta itemMeta, String string){
+    public static boolean isPrivateNameEqual(@Nullable ItemMeta itemMeta, String string){
+        System.out.println("dfshasdfhb");
         if(itemMeta == null) return false;
+        System.out.println(itemMeta.getPersistentDataContainer().get(VotePlugin.PRIVATE_NAME_KEY, PersistentDataType.STRING));
+        if(itemMeta.getPersistentDataContainer().get(VotePlugin.PRIVATE_NAME_KEY, PersistentDataType.STRING) == null) return false;
 
-        return itemMeta.getLocalizedName().equalsIgnoreCase(string);
+        return itemMeta.getPersistentDataContainer().get(VotePlugin.PRIVATE_NAME_KEY, PersistentDataType.STRING).equalsIgnoreCase(string);
+    }
+
+    public static String getPrivateName(ItemStack item){
+        if(item == null) return null;
+        if(item.getItemMeta() == null) return null;
+
+        return item.getItemMeta().getPersistentDataContainer().get(VotePlugin.PRIVATE_NAME_KEY, PersistentDataType.STRING);
     }
 
     public static boolean charInArray(char[] array, char charToCheck){

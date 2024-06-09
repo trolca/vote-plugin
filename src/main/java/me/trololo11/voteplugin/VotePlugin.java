@@ -16,6 +16,7 @@ import me.trololo11.voteplugin.tasks.SynchroniseData;
 import me.trololo11.voteplugin.utils.Menu;
 import me.trololo11.voteplugin.utils.Poll;
 import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -28,6 +29,7 @@ import java.util.logging.Logger;
 public final class VotePlugin extends JavaPlugin {
 
     public final Properties dbProperties;
+    public static final NamespacedKey PRIVATE_NAME_KEY = new NamespacedKey("voteplugin", "private-name");
     public Logger logger;
 
     private int pollsNotLoad;
@@ -92,6 +94,7 @@ public final class VotePlugin extends JavaPlugin {
         getCommand("finishpoll").setTabCompleter(new StopPollTabCompleter());
 
     }
+
 
     @Override
     public void onDisable() {

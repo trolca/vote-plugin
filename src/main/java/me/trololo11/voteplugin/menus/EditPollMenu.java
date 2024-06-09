@@ -122,7 +122,7 @@ public class EditPollMenu extends Menu {
         ItemStack item = e.getCurrentItem();
         Player player = (Player) e.getWhoClicked();
 
-        if(Utils.isLocalizedNameEqual(item.getItemMeta(), "icon-edit")){
+        if(Utils.isPrivateNameEqual(item.getItemMeta(), "icon-edit")){
             new IconSelectMenu(this).open(player);
         }
 
@@ -130,27 +130,27 @@ public class EditPollMenu extends Menu {
 
             //exit
             case RED_DYE -> {
-                if(!Utils.isLocalizedNameEqual(item.getItemMeta(), "back")) return;
+                if(!Utils.isPrivateNameEqual(item.getItemMeta(), "back")) return;
 
                 seePollMenu.open(player);
             }
             //settings menu
             case LIGHT_GRAY_DYE -> {
-                if(!Utils.isLocalizedNameEqual(item.getItemMeta(), "settings")) return;
+                if(!Utils.isPrivateNameEqual(item.getItemMeta(), "settings")) return;
 
                 new PollSettingsMenu(this, newPollSettings).open(player);
             }
 
             //end time set
             case CLOCK ->{
-                if(!Utils.isLocalizedNameEqual(item.getItemMeta(), "end-date")) return;
+                if(!Utils.isPrivateNameEqual(item.getItemMeta(), "end-date")) return;
 
                 new EndDateSetMenu(this, days, hours, minutes).open(player);
             }
 
             //confirm
             case GREEN_DYE -> {
-                if(!Utils.isLocalizedNameEqual(item.getItemMeta(), "confirm")) return;
+                if(!Utils.isPrivateNameEqual(item.getItemMeta(), "confirm")) return;
 
                 poll.setPollSettings(newPollSettings);
                 poll.setIcon(newPollIcon);
@@ -171,8 +171,8 @@ public class EditPollMenu extends Menu {
 
             //logic of swapping options
             case OAK_SIGN -> {
-                String localizedName = item.getItemMeta().getLocalizedName();
-                if(item.getItemMeta().getLocalizedName().startsWith("option-")){
+                String localizedName = Utils.getPrivateName(item);
+                if(Utils.getPrivateName(item).startsWith("option-")){
 
                     byte optionNum = Byte.parseByte(localizedName.split("-")[1]);
 
@@ -193,7 +193,7 @@ public class EditPollMenu extends Menu {
 
                     setMenuItems(player);
 
-                }else if(item.getItemMeta().getLocalizedName().startsWith("selected-option-")){
+                }else if(Utils.getPrivateName(item).startsWith("selected-option-")){
                     //If the player clicks the already selected option it clears the selection
 
                     isEditingOption = false;

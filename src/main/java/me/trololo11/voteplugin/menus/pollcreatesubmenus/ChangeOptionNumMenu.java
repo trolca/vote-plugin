@@ -76,15 +76,15 @@ public class ChangeOptionNumMenu extends Menu {
         switch (item.getType()){
 
             case RED_DYE -> {
-                if(!Utils.isLocalizedNameEqual(item.getItemMeta(), "back")) return;
+                if(!Utils.isPrivateNameEqual(item.getItemMeta(), "back")) return;
 
                 optionEditMenu.open(player);
             }
 
             case OAK_SIGN -> {
-                if(!item.getItemMeta().getLocalizedName().startsWith("option-")) return;
+                if(!Utils.getPrivateName(item).startsWith("option-")) return;
 
-                int num = Integer.parseInt(item.getItemMeta().getLocalizedName().split("-")[1]);
+                int num = Integer.parseInt(Utils.getPrivateName(item).split("-")[1]);
                 int startNumber = optionEditMenu.getOptionNumber();
 
                 LinkedList<String> options = pollCreateMenu.getOptions();

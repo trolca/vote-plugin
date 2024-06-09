@@ -99,8 +99,8 @@ public class SeePollsMenu extends Menu {
         ItemStack item = e.getCurrentItem();
         Player player = (Player) e.getWhoClicked();
 
-        if(item.getItemMeta().getLocalizedName().startsWith("poll-")){
-            String code = item.getItemMeta().getLocalizedName().split("-")[1];
+        if(Utils.getPrivateName(item).startsWith("poll-")){
+            String code = Utils.getPrivateName(item).split("-")[1];
 
             Poll poll = pollsManager.getPoll(code);
 
@@ -118,13 +118,13 @@ public class SeePollsMenu extends Menu {
         switch (item.getType()){
 
             case RED_DYE -> {
-                if(!Utils.isLocalizedNameEqual(item.getItemMeta(), "back")) return;
+                if(!Utils.isPrivateNameEqual(item.getItemMeta(), "back")) return;
 
                 player.closeInventory();
             }
 
             case TORCH -> {
-                if(!Utils.isLocalizedNameEqual(item.getItemMeta(), "active-polls")) return;
+                if(!Utils.isPrivateNameEqual(item.getItemMeta(), "active-polls")) return;
 
                 pollType = PollType.ACTIVE;
                 page = 1;
@@ -132,7 +132,7 @@ public class SeePollsMenu extends Menu {
             }
 
             case REDSTONE_TORCH -> {
-                if(!Utils.isLocalizedNameEqual(item.getItemMeta(), "historic-polls")) return;
+                if(!Utils.isPrivateNameEqual(item.getItemMeta(), "historic-polls")) return;
 
                 pollType = PollType.HISTORIC;
                 page = 1;
@@ -140,7 +140,7 @@ public class SeePollsMenu extends Menu {
             }
 
             case ENDER_EYE -> {
-                if(!Utils.isLocalizedNameEqual(item.getItemMeta(), "all-polls")) return;
+                if(!Utils.isPrivateNameEqual(item.getItemMeta(), "all-polls")) return;
 
                 pollType = PollType.ALL;
                 page = 1;
@@ -148,7 +148,7 @@ public class SeePollsMenu extends Menu {
             }
 
             case REDSTONE -> {
-                if(!Utils.isLocalizedNameEqual(item.getItemMeta(), "recent-polls")) return;
+                if(!Utils.isPrivateNameEqual(item.getItemMeta(), "recent-polls")) return;
 
                 pollType = PollType.RECENTLY_FINISHED;
                 page = 1;
@@ -157,9 +157,9 @@ public class SeePollsMenu extends Menu {
 
             case ARROW -> {
 
-                if(Utils.isLocalizedNameEqual(item.getItemMeta(), "next-page")){
+                if(Utils.isPrivateNameEqual(item.getItemMeta(), "next-page")){
                     page++;
-                }else if(Utils.isLocalizedNameEqual(item.getItemMeta(), "previous-page")){
+                }else if(Utils.isPrivateNameEqual(item.getItemMeta(), "previous-page")){
                     page--;
                 }
 

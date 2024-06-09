@@ -88,8 +88,8 @@ public class SeePlayerPollsMenu extends Menu {
 
         assert item != null;
 
-        if(item.getItemMeta().getLocalizedName().startsWith("poll-")){
-            String code = item.getItemMeta().getLocalizedName().split("-")[1];
+        if(Utils.getPrivateName(item).startsWith("poll-")){
+            String code = Utils.getPrivateName(item).split("-")[1];
 
             Poll poll = pollsManager.getPoll(code);
 
@@ -107,7 +107,7 @@ public class SeePlayerPollsMenu extends Menu {
         switch (item.getType()){
 
             case RED_DYE -> {
-                if(!Utils.isLocalizedNameEqual(item.getItemMeta(), "back")) return;;
+                if(!Utils.isPrivateNameEqual(item.getItemMeta(), "back")) return;;
 
                 if(menuBack == null)
                     playerInv.closeInventory();
@@ -117,9 +117,9 @@ public class SeePlayerPollsMenu extends Menu {
 
             case ARROW -> {
 
-                if(Utils.isLocalizedNameEqual(item.getItemMeta(), "next-page")){
+                if(Utils.isPrivateNameEqual(item.getItemMeta(), "next-page")){
                     page++;
-                }else if(Utils.isLocalizedNameEqual(item.getItemMeta(), "previous-page")){
+                }else if(Utils.isPrivateNameEqual(item.getItemMeta(), "previous-page")){
                     page--;
                 }
 

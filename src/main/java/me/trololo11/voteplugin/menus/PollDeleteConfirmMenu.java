@@ -68,13 +68,13 @@ public class PollDeleteConfirmMenu extends Menu {
         switch (item.getType()){
 
             case RED_DYE ->{
-                if(!Utils.isLocalizedNameEqual(item.getItemMeta(), "no")) return;
+                if(!Utils.isPrivateNameEqual(item.getItemMeta(), "no")) return;
 
                 seePollMenu.open(player);
             }
 
             case GREEN_DYE -> {
-                if(!Utils.isLocalizedNameEqual(item.getItemMeta(), "yes")) return;
+                if(!Utils.isPrivateNameEqual(item.getItemMeta(), "yes")) return;
 
                 try {
                     pollsManager.removePoll(poll);
